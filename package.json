@@ -1,8 +1,8 @@
 {
-  "name": "nest-typescript-starter",
+  "name": "swapi-proxy",
   "private": true,
   "version": "1.0.0",
-  "description": "Nest TypeScript starter repository",
+  "description": "Swapi proxy server with response caching",
   "license": "MIT",
   "scripts": {
     "build": "nest build",
@@ -46,6 +46,7 @@
     "supertest": "^6.3.3",
     "ts-jest": "^29.1.0",
     "ts-loader": "^9.4.3",
+    "ts-mockito": "^2.6.1",
     "ts-node": "^10.9.1",
     "tsconfig-paths": "^4.2.0",
     "typescript": "^5.1.3"
