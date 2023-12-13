@@ -1,20 +1,22 @@
 import { Controller, Get, Logger, Req } from '@nestjs/common';
 import { AppService } from './app.service';
+import { CachedApiProxyService } from './cached-api-proxy.service';
 
-@Controller("dummy")
+@Controller("api")
 export class AppController {
   private readonly logger = new Logger(AppController.name);
 
-  constructor(private readonly appService: AppService) {}
-
-  @Get()
-  getHello(@Req() request: Request): string {
-    console.log(request.url)
-    this.logger.log('Some log message');
-    this.logger.error('Error message');
-    this.logger.warn('Warning message');
-    this.logger.debug('Debug message');
-    this.logger.verbose('Verbose message');
+  constructor(private readonly appService: AppService, private readonly cachedApiProxyService: CachedApiProxyService) { }
+  
+  @Get("dummy")
+  async getHello(@Req() request: Request): Promise<string> {
+    this.logger.log(`Dummy endpoint hit ${request.url}`);
     return this.appService.getHello();
+  }
+  
+  @Get("*")
+  async default(@Req() request: Request): Promise<string> {
+    this.logger.log('Default api proxy endpoint hit');
+    return await this.cachedApiProxyService.get(request.url);
   }
 }
