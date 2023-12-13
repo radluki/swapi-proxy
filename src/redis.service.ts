@@ -1,5 +1,5 @@
 import { Injectable, Logger, Inject } from '@nestjs/common';
-import { Redis } from 'ioredis';
+import { createLogger } from './logger-factory';
 
 const SECONDS_IN_24H = 86400;
 
@@ -11,7 +11,7 @@ export interface RedisClient {
 
 @Injectable()
 export class RedisService {
-    private readonly logger = new Logger(RedisService.name);
+    private readonly logger = createLogger(RedisService.name);
 
     constructor(@Inject('REDIS_CLIENT') private readonly redis: RedisClient) { }
 

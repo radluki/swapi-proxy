@@ -1,10 +1,11 @@
-import { Injectable, Logger, Inject } from '@nestjs/common';
+import { Injectable, Inject } from '@nestjs/common';
 import axios from 'axios';
+import { createLogger } from './logger-factory';
 
 
 @Injectable()
 export class ApiProxyService {
-    private readonly logger = new Logger(ApiProxyService.name);
+    private readonly logger = createLogger(ApiProxyService.name);
 
     constructor(@Inject('API_URL') private readonly apiUrl: string) { }
 

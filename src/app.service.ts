@@ -1,8 +1,9 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
+import { createLogger } from './logger-factory';
 
 @Injectable()
 export class AppService {
-  private readonly logger = new Logger(AppService.name);
+  private readonly logger = createLogger(AppService.name);
 
   getHello(): string {
     this.logger.log('Some log message');

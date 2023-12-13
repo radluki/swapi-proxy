@@ -1,11 +1,12 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { ApiProxyService } from './api-proxy.service';
 import { RedisService } from './redis.service';
+import { createLogger } from './logger-factory';
 
 
 @Injectable()
 export class CachedApiProxyService {
-    private readonly logger = new Logger(CachedApiProxyService.name);
+    private readonly logger = createLogger(CachedApiProxyService.name);
 
     constructor(
         private readonly apiProxyService: ApiProxyService,
