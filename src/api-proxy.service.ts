@@ -8,15 +8,17 @@ export class ApiProxyService {
 
     constructor(@Inject('API_URL') private readonly apiUrl: string) { }
 
-    async get(relativeUrl: string): Promise<any | null> {
+    async get(relativeUrl: string): Promise<string | null> {
         try {
             const fullUrl = `${this.apiUrl}${relativeUrl}`;
             this.logger.log(`Fetching data from url: ${fullUrl}`);
             const response = await axios.get(`${fullUrl}`);
-            return response.data;
+            const responseStr = JSON.stringify(response.data);
+            this.logger.log(`Fetched data: ${responseStr}`);
+            return responseStr || null;
         } catch (error) {
             this.logger.error(`Error fetching data: ${error.message}`);
-            return null;
         }
+        return null;
     }
 }

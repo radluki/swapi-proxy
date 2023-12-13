@@ -14,7 +14,7 @@ export class AppController {
     return this.appService.getHello();
   }
   
-  @Get("*")
+  @Get("films|species|vehicles|starships|people|planets")
   async default(@Req() request: Request): Promise<string> {
     this.logger.log('Default api proxy endpoint hit');
     return await this.cachedApiProxyService.get(request.url);

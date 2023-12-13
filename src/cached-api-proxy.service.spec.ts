@@ -6,86 +6,70 @@ import { RedisService } from './redis.service';
 
 describe('CachedApiProxyService', () => {
     let sut: CachedApiProxyService;
-    let apiProxyService: ApiProxyService;
-    let redisService: RedisService;
+    let apiProxyServiceMock: ApiProxyService;
+    let redisServiceMock: RedisService;
 
     const key = "people/1/";
-
-    type Person = {
-        name: string;
-        height: string;
-        mass: string;
-    };
-
-    const value: Person = {
+    const value = {
         name: 'Luke Skywalker',
         height: '172',
         mass: '77',
     }
+    const valueStr = JSON.stringify(value);
 
     beforeEach(async () => {
-        apiProxyService = mock<ApiProxyService>();
-        redisService = mock<RedisService>();
-        sut = new CachedApiProxyService(instance(apiProxyService), instance(redisService));
+        apiProxyServiceMock = mock<ApiProxyService>();
+        redisServiceMock = mock<RedisService>();
+        sut = new CachedApiProxyService(instance(apiProxyServiceMock), instance(redisServiceMock));
     });
 
     describe('get', () => {
 
-        function expectPerson(resultStr: string) {
-
-            const result = JSON.parse(resultStr);
-            expect(result).toBeDefined();
-            expect(result.name).toBe(value.name);
-            expect(result.height).toBe(value.height);
-            expect(result.mass).toBe(value.mass);
-
-        }
-
         it('should not access api when cache available', async () => {
-            when(redisService.get(key)).thenResolve(JSON.stringify(value));
+            when(redisServiceMock.get(key)).thenResolve(JSON.stringify(value));
 
             const resultStr = await sut.get(key)
-            expectPerson(resultStr);
+            expect(resultStr).toBe(valueStr);
 
-            verify(redisService.get(key)).once();
-            verify(apiProxyService.get(anything())).never();
-            verify(redisService.set(anything(), anything())).never();
+            verify(redisServiceMock.get(key)).once();
+            verify(apiProxyServiceMock.get(anything())).never();
+            verify(redisServiceMock.set(anything(), anything())).never();
         });
 
         it('should access api and set cache when cache returns null', async () => {
-            when(redisService.get(key)).thenResolve(null);
-            when(apiProxyService.get(key)).thenResolve(value);
+            when(redisServiceMock.get(key)).thenResolve(null);
+            when(apiProxyServiceMock.get(key)).thenResolve(valueStr);
 
             const resultStr = await sut.get(key)
-            expectPerson(resultStr);
+            expect(resultStr).toBe(valueStr);
 
-            verify(redisService.get(key)).once();
-            verify(apiProxyService.get(key)).once();
-            verify(redisService.set(key, resultStr)).once();
+            verify(redisServiceMock.get(key)).once();
+            verify(apiProxyServiceMock.get(key)).once();
+            verify(redisServiceMock.set(key, resultStr)).once();
         });
 
         it('should not set cache when api returns null', async () => {
-            when(redisService.get(key)).thenResolve(null);
-            when(apiProxyService.get(key)).thenResolve(null);
+            when(redisServiceMock.get(key)).thenResolve(null);
+            when(apiProxyServiceMock.get(key)).thenResolve(null);
 
             const result = await sut.get(key)
             expect(result).toBeNull();
 
-            verify(redisService.get(key)).once();
-            verify(apiProxyService.get(key)).once();
-            verify(redisService.set(anything(), anything())).never();
+            verify(redisServiceMock.get(key)).once();
+            verify(apiProxyServiceMock.get(key)).once();
+            verify(redisServiceMock.set(anything(), anything())).never();
         });
 
         it('should return null when api rejects', async () => {
-            when(redisService.get(key)).thenResolve(null);
-            when(apiProxyService.get(key)).thenReject(new Error("ERROR"));
+            when(redisServiceMock.get(key)).thenResolve(null);
+            when(apiProxyServiceMock.get(key)).thenReject(new Error("ERROR"));
 
             const result = await sut.get(key)
             expect(result).toBeNull();
 
-            verify(redisService.get(key)).once();
-            verify(apiProxyService.get(key)).once();
-            verify(redisService.set(anything(), anything())).never();
+            verify(redisServiceMock.get(key)).once();
+            verify(apiProxyServiceMock.get(key)).once();
+            verify(redisServiceMock.set(anything(), anything())).never();
         });
 
     });

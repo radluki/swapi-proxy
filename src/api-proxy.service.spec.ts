@@ -8,21 +8,14 @@ const mockedAxios = axios as jest.Mocked<typeof axios>;
 describe('ApiProxyService', () => {
     let sut: ApiProxyService;
 
-    const api_url = "https://swapi.dev/api/";
-
-    const key = "people/1/";
-
-    type Person = {
-        name: string;
-        height: string;
-        mass: string;
-    };
-
-    const value: Person = {
+    const api_url = "https://swapi.dev/api";
+    const relativeUrl = "/people/1/";
+    const value = {
         name: 'Luke Skywalker',
         height: '172',
         mass: '77',
     }
+    const valueStr = JSON.stringify(value);
 
     beforeAll(async () => {
         sut = new ApiProxyService(api_url);
@@ -36,16 +29,19 @@ describe('ApiProxyService', () => {
 
     describe('get', () => {
 
-        it('should return value when key exists', async () => {
-            const result = await sut.get(key)
-            expect(result).toBeDefined();
-            expect(result.name).toBe(value.name);
-            expect(result.height).toBe(value.height);
-            expect(result.mass).toBe(value.mass);
+        it('should return serialized value when axios api call returns resp.data', async () => {
+            const result = await sut.get(relativeUrl)
+            expect(result).toBe(valueStr);
         });
 
-        it('should return null when redis throws an error', async () => {
+        it('should return null when axios rejects', async () => {
             const result = await sut.get("unknown-endpoint")
+            expect(result).toBeNull();
+        });
+
+        it('should return null when response.data is undefined', async () => {
+            mockedAxios.get.mockResolvedValueOnce({});
+            const result = await sut.get(relativeUrl)
             expect(result).toBeNull();
         });
     });

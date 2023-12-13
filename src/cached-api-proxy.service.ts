@@ -12,8 +12,11 @@ export class CachedApiProxyService {
         private readonly redisService: RedisService) { }
 
     async get(relativeUrl: string): Promise<string | null> {
+        return await this.getFromCache(relativeUrl) || this.getFromApi(relativeUrl);
+    }
+
+    private async getFromCache(key: string): Promise<string | null> {
         try {
-            const key = relativeUrl;
             const cachedValue = await this.redisService.get(key);
             if (cachedValue) {
                 this.logger.log(`Cache hit for key "${key}"`);
@@ -23,19 +26,18 @@ export class CachedApiProxyService {
         } catch (err) {
             this.logger.warn(`Exception during cache check: ${err.message}`);
         }
-        
+        return null;
+    }
+
+    private async getFromApi(relativeUrl: string): Promise<string | null> {
         try {
             this.logger.log(`Fetching data directly from api for key "${relativeUrl}"`);
-            const responseData = await this.apiProxyService.get(relativeUrl);
-            if (!responseData) {
-                return null;
-            }
-            const responseString = JSON.stringify(responseData);
-            this.redisService.set(relativeUrl, responseString);
-            return responseString;
+            const responseDataStr = await this.apiProxyService.get(relativeUrl);
+            responseDataStr && this.redisService.set(relativeUrl, responseDataStr);
+            return responseDataStr;
         } catch (error) {
             this.logger.error(`Error fetching data: ${error.message}`);
-            return null;
         }
+        return null;
     }
 }

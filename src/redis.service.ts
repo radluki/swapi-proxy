@@ -4,7 +4,7 @@ import { Redis } from 'ioredis';
 const SECONDS_IN_24H = 86400;
 
 export interface RedisClient {
-    set(key: string, value: string, mode: string): Promise<string>;
+    set(key: string, value: string, mode: string, seconds: number): Promise<string>;
     get(key: string): Promise<string>;
     exists(key: string): Promise<number>;
 }
@@ -13,7 +13,7 @@ export interface RedisClient {
 export class RedisService {
     private readonly logger = new Logger(RedisService.name);
 
-    constructor(@Inject('REDIS_CLIENT') private readonly redis: Redis) { }
+    constructor(@Inject('REDIS_CLIENT') private readonly redis: RedisClient) { }
 
     async set(key: string, value: string) {
         try {
@@ -34,7 +34,7 @@ export class RedisService {
             return value;
         } catch (err) {
             this.logger.error(`Error getting key: ${err}`);
-            return null;
         }
+        return null;
     }
 }
