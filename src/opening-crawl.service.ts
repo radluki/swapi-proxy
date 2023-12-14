@@ -48,9 +48,10 @@ export class OpeningCrawlService {
             .join('\n')
             .replaceAll(/[^\w\s]+/g, "")
             .toLowerCase()
+            .trim()
             .split(/\s+/);
         const counterObj = this.getCounterObj(openingCrawls)
-        const sortedDeys = Object.keys(counterObj).sort();
+        // const sortedDeys = Object.keys(counterObj).sort();
         return JSON.stringify(counterObj);
     }
 }
