@@ -4,7 +4,6 @@ import { AppModule } from './../src/app.module';
 import { INestApplication } from '@nestjs/common';
 import { Redis } from 'ioredis';
 
-
 describe('AppController (e2e)', () => {
   let app: INestApplication;
   let redisClient: Redis;
@@ -14,7 +13,6 @@ describe('AppController (e2e)', () => {
       imports: [AppModule],
     }).compile();
 
-    
     app = moduleFixture.createNestApplication();
     redisClient = app.get<Redis>('REDIS_CLIENT');
     await app.init();

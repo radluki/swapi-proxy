@@ -3,20 +3,23 @@ import { AppService } from './app.service';
 import { CachedApiProxyService } from './cached-api-proxy.service';
 import { createLogger } from './logger-factory';
 
-@Controller("api")
+@Controller('api')
 export class AppController {
   private readonly logger = createLogger(AppController.name);
 
-  constructor(private readonly appService: AppService, private readonly cachedApiProxyService: CachedApiProxyService) { }
-  
-  @Get("dummy")
+  constructor(
+    private readonly appService: AppService,
+    private readonly cachedApiProxyService: CachedApiProxyService,
+  ) {}
+
+  @Get('dummy')
   async getHello(@Req() request: Request): Promise<string> {
     this.logger.log(`Dummy endpoint hit ${request.url}`);
     return this.appService.getHello();
   }
-  
+
   // TODO: Add documentation
-  @Get("films|species|vehicles|starships|people|planets")
+  @Get('films|species|vehicles|starships|people|planets')
   async default(@Req() request: Request): Promise<string> {
     this.logger.log('Default api proxy endpoint hit');
     return await this.cachedApiProxyService.get(request.url);

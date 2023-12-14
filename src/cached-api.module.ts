@@ -17,8 +17,8 @@ import { CachedApiProxyService } from './cached-api-proxy.service';
       },
     },
     {
-      provide: "API_URL",
-      useValue: "https://swapi.dev"
+      provide: 'API_URL',
+      useValue: 'https://swapi.dev',
     },
     RedisService,
     ApiProxyService,
@@ -26,4 +26,4 @@ import { CachedApiProxyService } from './cached-api-proxy.service';
   ],
   exports: [CachedApiProxyService],
 })
-export class CachedApiModule { }
+export class CachedApiModule {}
