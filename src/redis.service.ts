@@ -14,8 +14,13 @@ export interface RedisClient {
   exists(key: string): Promise<number>;
 }
 
+export interface CacheService {
+  set(key: string, value: string): Promise<void>;
+  get(key: string): Promise<string | null>;
+}
+
 @Injectable()
-export class RedisService {
+export class RedisService implements CacheService {
   private readonly logger = createLogger(RedisService.name);
 
   constructor(@Inject('REDIS_CLIENT') private readonly redis: RedisClient) {}

@@ -1,6 +1,6 @@
 import { Module, Global } from '@nestjs/common';
 import Redis from 'ioredis';
-import { RedisClient, RedisService } from './redis.service';
+import { RedisClient, RedisService, CacheService } from './redis.service';
 import { ApiProxyService } from './api-proxy.service';
 import { CachedApiProxyService } from './cached-api-proxy.service';
 
@@ -20,7 +20,10 @@ import { CachedApiProxyService } from './cached-api-proxy.service';
       provide: 'API_URL',
       useValue: 'https://swapi.dev',
     },
-    RedisService,
+    {
+      provide: "CacheService",
+      useClass: RedisService,
+    },
     ApiProxyService,
     CachedApiProxyService,
   ],

@@ -1,0 +1,5 @@
+To connect devcontainer to compose network call from outside:
+docker network connect PROJECT_DIR_default DEV_CONTAINER
+
+Example:
+docker network connect swapi-proxy_default dazzling_goldstine

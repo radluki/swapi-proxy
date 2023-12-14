@@ -1,6 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { AppController } from './app.controller';
-import { AppService } from './app.service';
 import { mock, instance, when } from 'ts-mockito';
 import { CachedApiProxyService } from './cached-api-proxy.service';
 
@@ -23,7 +22,6 @@ describe('AppController', () => {
           provide: CachedApiProxyService,
           useValue: cachedApiProxyServiceMockMock,
         },
-        AppService,
       ],
     }).compile();
   });
@@ -32,12 +30,14 @@ describe('AppController', () => {
     requestMock = mock<Request>();
   });
 
-  describe('getHello', () => {
-    it('should return "Hello World!"', async () => {
+  describe('healthcheck', () => {
+    it('should return proper response', async () => {
       const appController = app.get(AppController);
       when(requestMock.url).thenReturn('MY_URL');
-      expect(await appController.getHello(instance(requestMock))).toBe(
-        'Hello World!',
+      const healthcheckResp = "<h1>HealthCheck</h1><h3>server is alive</h3>";
+
+      expect(await appController.healthcheck(instance(requestMock))).toBe(
+        healthcheckResp,
       );
     });
   });

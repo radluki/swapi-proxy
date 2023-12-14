@@ -1,6 +1,6 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { ApiProxyService } from './api-proxy.service';
-import { RedisService } from './redis.service';
+import { CacheService } from './redis.service';
 import { createLogger } from './logger-factory';
 
 @Injectable()
@@ -9,7 +9,7 @@ export class CachedApiProxyService {
 
   constructor(
     private readonly apiProxyService: ApiProxyService,
-    private readonly redisService: RedisService,
+    @Inject("CacheService") private readonly cacheService: CacheService,
   ) {}
 
   async get(relativeUrl: string): Promise<string | null> {
@@ -20,7 +20,7 @@ export class CachedApiProxyService {
 
   private async getFromCache(key: string): Promise<string | null> {
     try {
-      const cachedValue = await this.redisService.get(key);
+      const cachedValue = await this.cacheService.get(key);
       if (cachedValue) {
         this.logger.log(`Cache hit for key "${key}"`);
         return cachedValue;
@@ -38,7 +38,7 @@ export class CachedApiProxyService {
         `Fetching data directly from api for key "${relativeUrl}"`,
       );
       const responseDataStr = await this.apiProxyService.get(relativeUrl);
-      responseDataStr && this.redisService.set(relativeUrl, responseDataStr);
+      responseDataStr && this.cacheService.set(relativeUrl, responseDataStr);
       return responseDataStr;
     } catch (error) {
       this.logger.error(`Error fetching data: ${error.message}`);

@@ -1,5 +1,4 @@
 import { Controller, Get, Req } from '@nestjs/common';
-import { AppService } from './app.service';
 import { CachedApiProxyService } from './cached-api-proxy.service';
 import { createLogger } from './logger-factory';
 
@@ -8,19 +7,18 @@ export class AppController {
   private readonly logger = createLogger(AppController.name);
 
   constructor(
-    private readonly appService: AppService,
     private readonly cachedApiProxyService: CachedApiProxyService,
   ) {}
 
-  @Get('dummy')
-  async getHello(@Req() request: Request): Promise<string> {
-    this.logger.log(`Dummy endpoint hit ${request.url}`);
-    return this.appService.getHello();
+  @Get('healthcheck')
+  async healthcheck(@Req() request: Request): Promise<string> {
+    this.logger.log(`healthcheck endpoint hit ${request.url}`);
+    return "<h1>HealthCheck</h1><h3>server is alive</h3>";
   }
 
   // TODO: Add documentation
   @Get('films|species|vehicles|starships|people|planets')
-  async default(@Req() request: Request): Promise<string> {
+  async proxy(@Req() request: Request): Promise<string> {
     this.logger.log('Default api proxy endpoint hit');
     return await this.cachedApiProxyService.get(request.url);
   }
