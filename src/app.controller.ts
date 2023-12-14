@@ -1,6 +1,7 @@
-import { Controller, Get, Req } from '@nestjs/common';
+import { Controller, Get, Req, HttpStatus, Res } from '@nestjs/common';
 import { CachedApiProxyService } from './cached-api-proxy.service';
 import { createLogger } from './logger-factory';
+import { Request, Response } from 'express';
 
 @Controller('api')
 export class AppController {
@@ -18,9 +19,16 @@ export class AppController {
 
   // TODO: Add documentation
   @Get(':category(films|species|vehicles|starships|people|planets)*')
-  async proxy(@Req() request: Request): Promise<string> {
-    this.logger.log('Default api proxy endpoint hit');
-    return await this.cachedApiProxyService.get(request.url);
+  async proxy(@Req() request: Request, @Res() res: Response) {
+    this.logger.log(`API proxy endpoint accessed for category: ${request.params.category}`);
+    
+    try {
+      const data = await this.cachedApiProxyService.get(request.url);
+      return res.status(HttpStatus.OK).send(data);
+    } catch (err) {
+      this.logger.error(`Error getting data from API: ${JSON.stringify(err)}`);
+      return res.status(err.status || HttpStatus.INTERNAL_SERVER_ERROR).send(err.message || 'Internal server error');
+    }
   }
 
   //TODO: Add endpoints:

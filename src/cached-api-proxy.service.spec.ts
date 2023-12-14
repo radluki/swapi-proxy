@@ -61,12 +61,12 @@ describe('CachedApiProxyService', () => {
       verify(cacheServiceMock.set(anything(), anything())).never();
     });
 
-    it('should return null when api rejects', async () => {
+    it('should propagate exception when api rejects', async () => {
+      const err = new Error('ERROR667');
       when(cacheServiceMock.get(key)).thenResolve(null);
-      when(apiProxyServiceMock.get(key)).thenReject(new Error('ERROR'));
+      when(apiProxyServiceMock.get(key)).thenReject(err);
 
-      const result = await sut.get(key);
-      expect(result).toBeNull();
+      await expect(sut.get(key)).rejects.toEqual(err);
 
       verify(cacheServiceMock.get(key)).once();
       verify(apiProxyServiceMock.get(key)).once();

@@ -3,6 +3,7 @@ import Redis from 'ioredis';
 import { RedisClient, RedisService } from './redis.service';
 import { ApiProxyService } from './api-proxy.service';
 import { CachedApiProxyService } from './cached-api-proxy.service';
+import { HttpRequestSender } from './http-request-sender';
 
 @Global()
 @Module({
@@ -24,6 +25,7 @@ import { CachedApiProxyService } from './cached-api-proxy.service';
       provide: "CacheService",
       useClass: RedisService,
     },
+    HttpRequestSender,
     ApiProxyService,
     CachedApiProxyService,
   ],

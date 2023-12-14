@@ -2,6 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { AppController } from './app.controller';
 import { mock, instance, when } from 'ts-mockito';
 import { CachedApiProxyService } from './cached-api-proxy.service';
+import { Request } from 'express';
 
 class CachedApiProxyServiceMock {
   get = jest.fn();
