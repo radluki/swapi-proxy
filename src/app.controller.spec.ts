@@ -3,9 +3,14 @@ import { AppController } from './app.controller';
 import { mock, instance, when } from 'ts-mockito';
 import { CachedApiProxyService } from './cached-api-proxy.service';
 import { Request } from 'express';
+import { OpeningCrawlService } from './opening-crawl.service';
 
 class CachedApiProxyServiceMock {
   get = jest.fn();
+}
+
+class OpeningCrawlServiceMock {
+  countWords = jest.fn();
 }
 
 describe('AppController', () => {
@@ -13,6 +18,7 @@ describe('AppController', () => {
   let requestMock: Request;
 
   const cachedApiProxyServiceMockMock = new CachedApiProxyServiceMock();
+  const openingCrawlServiceMock = new OpeningCrawlServiceMock();
 
   beforeAll(async () => {
     app = await Test.createTestingModule({
@@ -23,6 +29,10 @@ describe('AppController', () => {
           provide: CachedApiProxyService,
           useValue: cachedApiProxyServiceMockMock,
         },
+        {
+          provide: OpeningCrawlService,
+          useValue: openingCrawlServiceMock,
+        }
       ],
     }).compile();
   });

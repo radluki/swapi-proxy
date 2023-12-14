@@ -4,6 +4,7 @@ import { RedisClient, RedisService } from './redis.service';
 import { ApiProxyService } from './api-proxy.service';
 import { CachedApiProxyService } from './cached-api-proxy.service';
 import { HttpRequestSender } from './http-request-sender';
+import { OpeningCrawlService } from './opening-crawl.service';
 
 @Global()
 @Module({
@@ -28,7 +29,8 @@ import { HttpRequestSender } from './http-request-sender';
     HttpRequestSender,
     ApiProxyService,
     CachedApiProxyService,
+    OpeningCrawlService
   ],
-  exports: [CachedApiProxyService],
+  exports: [CachedApiProxyService, OpeningCrawlService],
 })
 export class CachedApiModule {}

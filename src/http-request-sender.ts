@@ -1,5 +1,7 @@
+import { Injectable } from '@nestjs/common';
 import axios from 'axios';
 
+@Injectable()
 export class HttpRequestSender {
     async get(url: string): Promise<any | undefined> {
         try {

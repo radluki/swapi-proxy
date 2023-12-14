@@ -2,6 +2,7 @@ import { Controller, Get, Req, HttpStatus, Res } from '@nestjs/common';
 import { CachedApiProxyService } from './cached-api-proxy.service';
 import { createLogger } from './logger-factory';
 import { Request, Response } from 'express';
+import { OpeningCrawlService } from './opening-crawl.service';
 
 @Controller('api')
 export class AppController {
@@ -9,6 +10,7 @@ export class AppController {
 
   constructor(
     private readonly cachedApiProxyService: CachedApiProxyService,
+    private readonly openingCrawlService: OpeningCrawlService,
   ) {}
 
   @Get('healthcheck')
@@ -31,7 +33,18 @@ export class AppController {
     }
   }
 
-  //TODO: Add endpoints:
+  @Get('opening-crawl/count-words')
+  async countWords(@Req() request: Request, @Res() res: Response) {
+    this.logger.log(`Opening crawl endpoint accessed`);
+    try {
+      const data = await this.openingCrawlService.countWords();
+      return res.status(HttpStatus.OK).send(data);
+    } catch (err) {
+      this.logger.error(`Error getting opening crawl data: ${JSON.stringify(err)}`);
+      return res.status(err.status || HttpStatus.INTERNAL_SERVER_ERROR).send(err.message || 'Internal server error');
+    }
+  }
+
   /*
     Each film entry returned from the /films/ API has an opening_crawl property which
     contains a short film plot description. Write an endpoint that will return:
@@ -40,6 +53,7 @@ export class AppController {
         number of occurrences in the text. Words should not be empty and should be
         separated by space or any number of consecutive control characters (i.e
         carriage return, line feed).
+    TODO: Add endpoints:
         B. a name of a character from the /people API that appears the most often
         across all of the openings of the film (or an array of names if there are more
         characters with the same number). We are interested only in exact name

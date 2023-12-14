@@ -146,4 +146,11 @@ describe('AppController (e2e)', () => {
     expect(body).toStrictEqual(dummyObj);
   });
 
+  it('GET /api/films/1000/ - test error forwarding', async () => {
+    const response = await req
+      .get("/api/films/1000/")
+    expect(response.statusCode).toBe(404);
+    expect(response.text).toBe("ErrorForward: Request failed with status code 404");
+  });
+
 });
