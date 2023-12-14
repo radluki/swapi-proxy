@@ -17,7 +17,7 @@ export class AppController {
   }
 
   // TODO: Add documentation
-  @Get('films|species|vehicles|starships|people|planets')
+  @Get(':category(films|species|vehicles|starships|people|planets)*')
   async proxy(@Req() request: Request): Promise<string> {
     this.logger.log('Default api proxy endpoint hit');
     return await this.cachedApiProxyService.get(request.url);

@@ -17,6 +17,7 @@ export class ApiProxyService {
       this.logger.log(`Fetched data: ${responseStr}`);
       return responseStr || null;
     } catch (error) {
+      console.error(error);
       this.logger.error(`Error fetching data: ${error.message}`);
     }
     return null;
