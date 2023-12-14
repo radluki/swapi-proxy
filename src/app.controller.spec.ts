@@ -32,7 +32,7 @@ describe('AppController', () => {
         {
           provide: OpeningCrawlService,
           useValue: openingCrawlServiceMock,
-        }
+        },
       ],
     }).compile();
   });
@@ -45,7 +45,7 @@ describe('AppController', () => {
     it('should return proper response', async () => {
       const appController = app.get(AppController);
       when(requestMock.url).thenReturn('MY_URL');
-      const healthcheckResp = "<h1>HealthCheck</h1><h3>server is alive</h3>";
+      const healthcheckResp = '<h1>HealthCheck</h1><h3>server is alive</h3>';
 
       expect(await appController.healthcheck(instance(requestMock))).toBe(
         healthcheckResp,

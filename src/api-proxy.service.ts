@@ -8,14 +8,15 @@ export class ApiProxyService {
 
   constructor(
     @Inject('API_URL') private readonly apiUrl: string,
-    private readonly httpReqSender: HttpRequestSender) { }
+    private readonly httpReqSender: HttpRequestSender,
+  ) {}
 
   async get(relativeUrl: string): Promise<string | null> {
-      const fullUrl = `${this.apiUrl}${relativeUrl}`;
-      this.logger.log(`Fetching data from url: ${fullUrl}`);
-      const responseData = await this.httpReqSender.get(`${fullUrl}`);
-      const responseStr = JSON.stringify(responseData);
-      this.logger.log(`Fetched data: ${responseStr}`);
-      return responseStr || null;
+    const fullUrl = `${this.apiUrl}${relativeUrl}`;
+    this.logger.log(`Fetching data from url: ${fullUrl}`);
+    const responseData = await this.httpReqSender.get(`${fullUrl}`);
+    const responseStr = JSON.stringify(responseData);
+    this.logger.log(`Fetched data: ${responseStr}`);
+    return responseStr || null;
   }
 }

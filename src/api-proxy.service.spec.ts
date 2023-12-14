@@ -38,9 +38,8 @@ describe('ApiProxyService', () => {
     });
 
     it('should propagate sender exceptions', async () => {
-      const err = { name: "err33", message: 'error12' };
-      when(requestSenderMock.get(anything()))
-        .thenReject(err);
+      const err = { name: 'err33', message: 'error12' };
+      when(requestSenderMock.get(anything())).thenReject(err);
 
       await expect(sut.get(unknownEndpoint)).rejects.toEqual(err);
     });

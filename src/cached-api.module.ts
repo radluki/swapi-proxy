@@ -23,13 +23,13 @@ import { OpeningCrawlService } from './opening-crawl.service';
       useValue: 'https://swapi.dev',
     },
     {
-      provide: "CacheService",
+      provide: 'CacheService',
       useClass: RedisService,
     },
     HttpRequestSender,
     ApiProxyService,
     CachedApiProxyService,
-    OpeningCrawlService
+    OpeningCrawlService,
   ],
   exports: [CachedApiProxyService, OpeningCrawlService],
 })

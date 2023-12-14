@@ -9,8 +9,8 @@ export class CachedApiProxyService {
 
   constructor(
     private readonly apiProxyService: ApiProxyService,
-    @Inject("CacheService") private readonly cacheService: CacheService,
-  ) { }
+    @Inject('CacheService') private readonly cacheService: CacheService,
+  ) {}
 
   async get(relativeUrl: string): Promise<string | null> {
     return (
@@ -33,9 +33,7 @@ export class CachedApiProxyService {
   }
 
   private async getFromApi(relativeUrl: string): Promise<string | null> {
-    this.logger.log(
-      `Fetching data directly from api for key "${relativeUrl}"`,
-    );
+    this.logger.log(`Fetching data directly from api for key "${relativeUrl}"`);
     const responseDataStr = await this.apiProxyService.get(relativeUrl);
     responseDataStr && this.cacheService.set(relativeUrl, responseDataStr);
     return responseDataStr;
