@@ -40,7 +40,7 @@ export class RedisService implements CacheService {
     }
     try {
       const value = await this.redis.get(key);
-      this.logger.log(`Value for "${key}": "${value}"`);
+      this.logger.debug(`Value for "${key}": "${value}"`);
       return value;
     } catch (err) {
       this.logger.error(`Error getting key: ${err}`);

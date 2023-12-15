@@ -22,10 +22,10 @@ export class CachedApiProxyService {
     try {
       const cachedValue = await this.cacheService.get(key);
       if (cachedValue) {
-        this.logger.log(`Cache hit for key "${key}"`);
+        this.logger.debug(`Cache hit for key "${key}"`);
         return cachedValue;
       }
-      this.logger.log(`Cache miss for key "${key}"`);
+      this.logger.debug(`Cache miss for key "${key}"`);
     } catch (err) {
       this.logger.warn(`Exception during cache check: ${err.message}`);
     }

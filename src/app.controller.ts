@@ -1,10 +1,4 @@
-import {
-  Controller,
-  Get,
-  Req,
-  HttpStatus,
-  HttpException,
-} from '@nestjs/common';
+import { Controller, Get, Req } from '@nestjs/common';
 import { CachedApiProxyService } from './cached-api-proxy.service';
 import { createLogger } from './logger-factory';
 import { Request } from 'express';
@@ -27,47 +21,18 @@ export class AppController {
 
   @Get('films/opening-crawls-counted-words')
   async countWords() {
-    try {
-      return await this.openingCrawlService.countWords();
-    } catch (err) {
-      this.logger.error(
-        `Error films/opening-crawls-counted-words: ${JSON.stringify(err)}`,
-      );
-      throw toHttpException(err);
-    }
+    return await this.openingCrawlService.countWords();
   }
 
   @Get('people/full-names-most-mentioned')
   async getNames() {
-    try {
-      return await this.openingCrawlService.getNamesWithTheMostOccurences();
-    } catch (err) {
-      this.logger.error(
-        `Error people/full-names-most-mentioned: ${JSON.stringify(err)}`,
-      );
-      throw toHttpException(err);
-    }
+    return await this.openingCrawlService.getNamesWithTheMostOccurences();
   }
 
   // TODO: Add documentation
   @Get(':category(films|species|vehicles|starships|people|planets)*')
   async proxy(@Req() request: Request) {
-    this.logger.log(
-      `API proxy endpoint accessed for category: ${request.params.category}`,
-    );
-
-    try {
-      return await this.cachedApiProxyService.get(request.url);
-    } catch (err) {
-      this.logger.error(`Error getting data from API: ${JSON.stringify(err)}`);
-      throw toHttpException(err);
-    }
+    this.logger.log(`API proxy for category: ${request.params.category}`);
+    return await this.cachedApiProxyService.get(request.url);
   }
-}
-
-function toHttpException(err: any) {
-  return new HttpException(
-    err.message || 'Internal server error',
-    err.status || HttpStatus.INTERNAL_SERVER_ERROR,
-  );
 }
