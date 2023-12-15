@@ -2,7 +2,7 @@ openapi: 3.0.0
 info:
   title: Example API
   version: 1.0.0
-  description: API for managing film data and health checks
+  description: Proxy API for Star Wars data from swapi.dev
 servers:
   - url: http://localhost:3000/api
     description: Local development server
@@ -39,7 +39,7 @@ paths:
   /films/opening-crawls/people/most-appearances:
     get:
       summary: Get Most Mentioned Names in Opening Crawls
-      description: Returns names of people with the most appearances in film opening crawls
+      description: Returns names of people with the most appearances in film opening crawls (only full names count)
       responses:
         200:
           description: List of names with most appearances
@@ -54,7 +54,7 @@ paths:
   /{resource}:
     get:
       summary: API Proxy
-      description: Proxy endpoint for various resources
+      description: Proxy endpoint to swapi resources
       parameters:
         - in: path
           name: resource
@@ -63,6 +63,19 @@ paths:
             type: string
             enum: [films, species, vehicles, starships, people, planets]
           description: Type of resource
+        - in: query
+          name: page
+          required: false
+          schema:
+            type: integer
+            default: 1
+            description: Page number for pagination
+        - in: query
+          name: search
+          required: false
+          schema:
+            type: string
+            description: Search term to filter the results
       responses:
         200:
           description: Proxy data for the requested resource
@@ -70,3 +83,35 @@ paths:
             application/json:
               schema:
                 type: object
+
+  /{resource}/{id}:
+    get:
+      summary: Get a specific swapi resource by ID
+      description: Retrieves detailed information about a specific resource identified by ID.
+      parameters:
+        - in: path
+          name: resource
+          required: true
+          schema:
+            type: string
+            enum: [films, species, vehicles, starships, people, planets]
+            description: The type of resource
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+            description: The unique identifier of the resource
+      responses:
+        200:
+          description: Successful response with the details of the resource
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                    description: The data of the requested resource
+        404:
+          description: Resource not found
