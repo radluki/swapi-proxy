@@ -1,7 +1,13 @@
-import { Controller, Get, Req, HttpStatus, Res } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Req,
+  HttpStatus,
+  HttpException,
+} from '@nestjs/common';
 import { CachedApiProxyService } from './cached-api-proxy.service';
 import { createLogger } from './logger-factory';
-import { Request, Response } from 'express';
+import { Request } from 'express';
 import { OpeningCrawlService } from './opening-crawl.service';
 
 @Controller('api')
@@ -20,52 +26,48 @@ export class AppController {
   }
 
   @Get('films/opening-crawls-counted-words')
-  async countWords(@Res() res: Response) {
+  async countWords() {
     try {
-      const data = await this.openingCrawlService.countWords();
-      return res.status(HttpStatus.OK).send(data);
+      return await this.openingCrawlService.countWords();
     } catch (err) {
       this.logger.error(
         `Error films/opening-crawls-counted-words: ${JSON.stringify(err)}`,
       );
-      return res
-        .status(err.status || HttpStatus.INTERNAL_SERVER_ERROR)
-        .send(err.message || 'Internal server error');
+      throw toHttpException(err);
     }
   }
 
   @Get('people/full-names-most-mentioned')
-  async getNames(@Res() res: Response) {
+  async getNames() {
     try {
-      const data =
-        await this.openingCrawlService.getNamesWithTheMostOccurences();
-      return res.status(HttpStatus.OK).send(data);
+      return await this.openingCrawlService.getNamesWithTheMostOccurences();
     } catch (err) {
       this.logger.error(
         `Error people/full-names-most-mentioned: ${JSON.stringify(err)}`,
       );
-      return res
-        .status(err.status || HttpStatus.INTERNAL_SERVER_ERROR)
-        .send(err.message || 'Internal server error');
+      throw toHttpException(err);
     }
   }
 
   // TODO: Add documentation
   @Get(':category(films|species|vehicles|starships|people|planets)*')
-  async proxy(@Req() request: Request, @Res() res: Response) {
+  async proxy(@Req() request: Request) {
     this.logger.log(
       `API proxy endpoint accessed for category: ${request.params.category}`,
     );
 
     try {
-      const data = await this.cachedApiProxyService.get(request.url);
-      return res.status(HttpStatus.OK).send(data);
+      return await this.cachedApiProxyService.get(request.url);
     } catch (err) {
       this.logger.error(`Error getting data from API: ${JSON.stringify(err)}`);
-      return res
-        .status(err.status || HttpStatus.INTERNAL_SERVER_ERROR)
-        .send(err.message || 'Internal server error');
+      throw toHttpException(err);
     }
   }
-  //TODO: GraphQL
+}
+
+function toHttpException(err: any) {
+  return new HttpException(
+    err.message || 'Internal server error',
+    err.status || HttpStatus.INTERNAL_SERVER_ERROR,
+  );
 }

@@ -102,7 +102,8 @@ describe('REST proxy api (e2e)', () => {
   it('GET /api/films/1000/ - test error forwarding', async () => {
     const response = await req.get('/api/films/1000/');
     expect(response.statusCode).toBe(404);
-    expect(response.text).toBe(
+    expect(response.body.statusCode).toBe(404);
+    expect(response.body.message).toBe(
       'ErrorForward: Request failed with status code 404',
     );
   });
