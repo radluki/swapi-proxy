@@ -1,0 +1,72 @@
+openapi: 3.0.0
+info:
+  title: Example API
+  version: 1.0.0
+  description: API for managing film data and health checks
+servers:
+  - url: http://localhost:3000/api
+    description: Local development server
+
+paths:
+  /healthcheck:
+    get:
+      summary: Health Check
+      description: Check the health of the server
+      responses:
+        200:
+          description: HealthCheck Successful
+          content:
+            text/html:
+              schema:
+                type: string
+                example: '<h1>HealthCheck</h1><h3>server is alive</h3>'
+
+  /films/opening-crawls/word-counts:
+    get:
+      summary: Get Word Counts in Opening Crawls
+      description: Returns a dictionary of words and their counts in film opening crawls
+      responses:
+        200:
+          description: A dictionary of word counts
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties:
+                  type: integer
+                  example: 15
+
+  /films/opening-crawls/people/most-appearances:
+    get:
+      summary: Get Most Mentioned Names in Opening Crawls
+      description: Returns names of people with the most appearances in film opening crawls
+      responses:
+        200:
+          description: List of names with most appearances
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: string
+                  example: "Luke Skywalker"
+
+  /{resource}:
+    get:
+      summary: API Proxy
+      description: Proxy endpoint for various resources
+      parameters:
+        - in: path
+          name: resource
+          required: true
+          schema:
+            type: string
+            enum: [films, species, vehicles, starships, people, planets]
+          description: Type of resource
+      responses:
+        200:
+          description: Proxy data for the requested resource
+          content:
+            application/json:
+              schema:
+                type: object

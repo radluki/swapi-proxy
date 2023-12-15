@@ -29,10 +29,9 @@ export class AppController {
     return await this.openingCrawlService.getNamesWithTheMostOccurences();
   }
 
-  // TODO: Add documentation
-  @Get(':category(films|species|vehicles|starships|people|planets)*')
+  @Get(':resource(films|species|vehicles|starships|people|planets)*')
   async proxy(@Req() request: Request) {
-    this.logger.log(`API proxy for category: ${request.params.category}`);
+    this.logger.log(`API proxy for resource: ${request.params.category}`);
     return await this.cachedApiProxyService.get(request.url);
   }
 }
