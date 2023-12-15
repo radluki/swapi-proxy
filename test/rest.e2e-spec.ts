@@ -1,40 +1,19 @@
 import * as request from 'supertest';
 import Redis from 'ioredis';
+import {
+  APP_URL,
+  createRedisClient,
+  maybeFlushRedis,
+  testHealthcheck,
+} from './common';
 
-const APP_DOMAIN = process.env.DOCKER === '1' ? 'app' : 'localhost';
-const REDIS_DOMAIN = process.env.DOCKER === '1' ? 'redis' : 'localhost';
-
-describe('AppController (e2e)', () => {
-  let APP_URL = `http://${APP_DOMAIN}:3000`;
-  let req = request(APP_URL);
+describe('REST proxy api (e2e)', () => {
+  const req = request(APP_URL);
   let redis: Redis;
 
-  function printInstructions() {
-    console.log(
-      `APP_URL: ${APP_URL}\nREDIS_DOMAIN: ${REDIS_DOMAIN}\n\n` +
-        `[LOCALHOST-INFO] If test run from outside docker the test uses exported ports:\n` +
-        `\t- make sure that docker-compose is up\n\n` +
-        `[DOCKER-INFO] If test run from inside docker:\n` +
-        `\t- pass DOCKER=1\n` +
-        `\t- make sure that docker-compose is up and devcontainer is connected to its network\n\n` +
-        `[COMMON] Pass FLUSHDB=1 to clean cache before running tests\n` +
-        'Some tests clean cache by themselves, but not all just for the sake of execution speed\n',
-    );
-  }
-
   beforeAll(async () => {
-    printInstructions();
-
-    redis = new Redis({
-      host: REDIS_DOMAIN,
-      port: 6379,
-    });
-
-    if (process.env.FLUSHDB === '1') {
-      redis.flushdb().then(() => {
-        console.log('All keys in the current database have been deleted');
-      });
-    }
+    redis = createRedisClient();
+    maybeFlushRedis(redis);
   });
 
   afterAll(async () => {
@@ -42,16 +21,7 @@ describe('AppController (e2e)', () => {
   });
 
   it('GET /api/healthcheck', async () => {
-    try {
-      await req
-        .get('/api/healthcheck')
-        .expect(200)
-        .expect('<h1>HealthCheck</h1><h3>server is alive</h3>');
-    } catch (error) {
-      throw new Error(
-        'HealthCheck Error: Make sure that docker-compose is up and devcontainer is connected to its network',
-      );
-    }
+    testHealthcheck(req);
   });
 
   it('GET /api/films/1/', async () => {
