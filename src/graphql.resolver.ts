@@ -9,7 +9,8 @@ export class GraphqlResolver {
   @Query(() => [Person])
   async people(
     @Args('name', { type: () => String, nullable: true }) name?: string,
+    @Args('page', { type: () => String, nullable: true }) page?: string,
   ) {
-    return this.graphqlService.getPeople(name);
+    return this.graphqlService.getPeople(name, page);
   }
 }
