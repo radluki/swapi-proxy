@@ -19,13 +19,13 @@ export class AppController {
     return '<h1>HealthCheck</h1><h3>server is alive</h3>';
   }
 
-  @Get('films/opening-crawls-counted-words')
-  async countWords() {
+  @Get('films/opening-crawls/word-counts')
+  async getCountedWordsFromOpeningCrawls() {
     return await this.openingCrawlService.countWords();
   }
 
-  @Get('people/full-names-most-mentioned')
-  async getNames() {
+  @Get('/films/opening-crawls/people/most-appearances')
+  async getMostMentionedNamesInOpeningCrawls() {
     return await this.openingCrawlService.getNamesWithTheMostOccurences();
   }
 
