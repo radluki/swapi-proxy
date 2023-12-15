@@ -58,10 +58,10 @@ export class People {
   @Field()
   count: number;
 
-  @Field()
+  @Field({ nullable: true })
   next: string;
 
-  @Field()
+  @Field({ nullable: true })
   previous: string;
 
   @Field(() => [Person])
