@@ -1,6 +1,6 @@
 import { Field, ObjectType } from '@nestjs/graphql';
 
-const ArrayField = Field(() => [String], { nullable: true });
+const StringArrayField = Field(() => [String]);
 
 @ObjectType()
 export class Person {
@@ -31,16 +31,16 @@ export class Person {
   @Field()
   homeworld: string;
 
-  @ArrayField
+  @StringArrayField
   films: string[];
 
-  @ArrayField
+  @StringArrayField
   species: [string];
 
-  @ArrayField
+  @StringArrayField
   vehicles: [string];
 
-  @ArrayField
+  @StringArrayField
   starships: [string];
 
   @Field()
@@ -51,4 +51,19 @@ export class Person {
 
   @Field()
   edited: string;
+}
+
+@ObjectType()
+export class People {
+  @Field()
+  count: number;
+
+  @Field()
+  next: string;
+
+  @Field()
+  previous: string;
+
+  @Field(() => [Person])
+  results: Person[];
 }

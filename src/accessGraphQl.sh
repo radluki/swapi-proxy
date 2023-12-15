@@ -4,5 +4,5 @@ URL="http://app:3000/graphql"
 
 curl -X POST -H "Content-Type: application/json" \
     --data \
-        '{ "query": "{ people(name: \"k\", page: \"3\") { name height eye_color starships url } }" }' \
+        '{ "query": "{ people { count next results { name starships } } }" }' \
     $URL | jq
