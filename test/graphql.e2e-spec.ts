@@ -1,11 +1,6 @@
 import * as request from 'supertest';
 import Redis from 'ioredis';
-import {
-  APP_URL,
-  createRedisClient,
-  maybeFlushRedis,
-  testHealthcheck,
-} from './common';
+import { APP_URL, createRedisClient, maybeFlushRedis } from './common';
 
 describe('GraphQl api (e2e)', () => {
   const req = request(APP_URL);
@@ -18,10 +13,6 @@ describe('GraphQl api (e2e)', () => {
 
   afterAll(async () => {
     await redis.quit();
-  });
-
-  it('GET /api/healthcheck', async () => {
-    testHealthcheck(req);
   });
 
   it('people simple', async () => {
