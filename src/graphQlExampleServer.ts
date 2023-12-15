@@ -12,8 +12,19 @@ const schema = buildSchema(`
     name: String
     height: String
     mass: String
+    hair_color: String
+    skin_color: String
+    eye_color: String
+    birth_year: String
     gender: String
     homeworld: String
+    films: [String]
+    species: [String]
+    vehicles: [String]
+    starships: [String]
+    url: String
+    created: String
+    edited: String
   }
 `);
 
@@ -44,6 +55,3 @@ app.use(
 app.listen(4000, () =>
   console.log('Express GraphQL Server Now Running On localhost:4000/graphql'),
 );
-
-
-// curl -X POST -H "Content-Type: application/json" --data '{ "query": "{ people(name: \"Luke\") { name height gender homeworld } }" }' http://localhost:4000/graphql
