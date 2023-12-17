@@ -1,7 +1,6 @@
 import { Module } from '@nestjs/common';
 import Redis from 'ioredis';
 import { RedisClient, RedisService } from './redis.service';
-import { ApiProxyService } from './api-proxy.service';
 import { CachedApiProxyService } from './cached-api-proxy.service';
 import { HttpRequestSender } from './http-request-sender';
 import { OpeningCrawlService } from './opening-crawl.service';
@@ -18,7 +17,7 @@ import { OpeningCrawlService } from './opening-crawl.service';
       },
     },
     {
-      provide: 'API_URL',
+      provide: 'SwapiUrl',
       useValue: 'https://swapi.dev',
     },
     {
@@ -26,7 +25,6 @@ import { OpeningCrawlService } from './opening-crawl.service';
       useClass: RedisService,
     },
     HttpRequestSender,
-    ApiProxyService,
     CachedApiProxyService,
     OpeningCrawlService,
   ],

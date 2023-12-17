@@ -16,7 +16,7 @@ export interface RedisClient {
 
 export interface CacheService {
   set(key: string, value: string): Promise<void>;
-  get(key: string): Promise<string | null>;
+  get(key: string): Promise<string>;
 }
 
 @Injectable()

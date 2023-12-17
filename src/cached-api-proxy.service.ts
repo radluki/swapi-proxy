@@ -1,21 +1,21 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { ApiProxyService } from './api-proxy.service';
 import { CacheService } from './redis.service';
 import { createLogger } from './logger-factory';
+import { HttpRequestSender } from './http-request-sender';
 
 @Injectable()
 export class CachedApiProxyService {
   private readonly logger = createLogger(CachedApiProxyService.name);
 
   constructor(
-    private readonly apiProxyService: ApiProxyService,
+    @Inject('SwapiUrl') private readonly apiUrl: string,
+    private readonly httpReqSender: HttpRequestSender,
     @Inject('CacheService') private readonly cacheService: CacheService,
   ) {}
 
-  async get(relativeUrl: string): Promise<string | null> {
-    return (
-      (await this.getFromCache(relativeUrl)) || this.getFromApi(relativeUrl)
-    );
+  async get(relativeUrl: string): Promise<string> {
+    const cachedValue = await this.getFromCache(relativeUrl);
+    return cachedValue || this.getFromSwapi(relativeUrl);
   }
 
   private async getFromCache(key: string): Promise<string> {
@@ -32,9 +32,10 @@ export class CachedApiProxyService {
     return null;
   }
 
-  private async getFromApi(relativeUrl: string): Promise<string> {
+  private async getFromSwapi(relativeUrl: string): Promise<string> {
     this.logger.log(`Fetching data directly from api for "${relativeUrl}"`);
-    const responseDataStr = await this.apiProxyService.get(relativeUrl);
+    const fullUrl = `${this.apiUrl}${relativeUrl}`;
+    const responseDataStr = await this.httpReqSender.get(`${fullUrl}`);
     responseDataStr && this.cacheService.set(relativeUrl, responseDataStr);
     return responseDataStr;
   }
