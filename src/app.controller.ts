@@ -13,7 +13,7 @@ export class AppController {
 
   @Get('healthcheck')
   async healthcheck(): Promise<string> {
-    return '<h1>HealthCheck</h1><h3>server is alive</h3>';
+    return 'swapi-proxy is up and running';
   }
 
   @Get('films/opening-crawls/word-counts')

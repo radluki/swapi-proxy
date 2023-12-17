@@ -37,7 +37,7 @@ describe('AppController', () => {
   describe('healthcheck', () => {
     it('should return proper response', async () => {
       const appController = app.get(AppController);
-      const healthcheckResp = '<h1>HealthCheck</h1><h3>server is alive</h3>';
+      const healthcheckResp = 'swapi-proxy is up and running';
 
       expect(await appController.healthcheck()).toBe(healthcheckResp);
     });
