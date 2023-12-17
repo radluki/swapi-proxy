@@ -8,7 +8,7 @@ import { OpeningCrawlsService } from './opening-crawl.service';
 @Module({
   providers: [
     {
-      provide: 'REDIS_CLIENT',
+      provide: 'RedisClient',
       useFactory: (): RedisClient => {
         return new Redis({
           host: 'redis',

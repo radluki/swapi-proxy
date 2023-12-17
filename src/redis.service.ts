@@ -23,7 +23,7 @@ export interface CacheService {
 export class RedisService implements CacheService {
   private readonly logger = createLogger(RedisService.name);
 
-  constructor(@Inject('REDIS_CLIENT') private readonly redis: RedisClient) {}
+  constructor(@Inject('RedisClient') private readonly redis: RedisClient) {}
 
   async set(key: string, value: string) {
     try {
