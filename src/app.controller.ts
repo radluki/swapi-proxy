@@ -16,6 +16,18 @@ export class AppController {
     return 'swapi-proxy is up and running';
   }
 
+  @Get('/')
+  async getRoot() {
+    return {
+      people: 'http://localhost:3000/api/people/',
+      planets: 'http://localhost:3000/api/planets/',
+      films: 'http://localhost:3000/api/films/',
+      species: 'http://localhost:3000/api/species/',
+      vehicles: 'http://localhost:3000/api/vehicles/',
+      starships: 'http://localhost:3000/api/starships/',
+    };
+  }
+
   @Get('films/opening-crawls/word-counts')
   async getCountedWordsFromOpeningCrawls() {
     return await this.openingCrawlsService.countWords();

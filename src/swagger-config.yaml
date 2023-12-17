@@ -126,7 +126,7 @@ paths:
   /graphql:
     post:
       summary: GraphQL Endpoint
-      description: Endpoint for submitting GraphQL queries
+      description: Use [GraphiQL console](http://localhost:3000/graphql/)
       requestBody:
         description: GraphQL query
         required: true

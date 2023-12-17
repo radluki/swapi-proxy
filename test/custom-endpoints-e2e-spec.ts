@@ -33,5 +33,4 @@ describe('Tests for custom endpoints (e2e)', () => {
     expect(body).toContain('dooku');
     expect(body).toContain('luke skywalker');
   });
-
 });
