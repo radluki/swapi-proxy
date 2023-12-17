@@ -118,9 +118,9 @@ paths:
   /graphql:
     post:
       summary: GraphQL Endpoint
-      description: Endpoint for submitting GraphQL queries and mutations
+      description: Endpoint for submitting GraphQL queries
       requestBody:
-        description: GraphQL query or mutation request
+        description: GraphQL query
         required: true
         content:
           application/json:
@@ -130,10 +130,19 @@ paths:
                 query:
                   type: string
                   description: GraphQL query string
-                variables:
-                  type: object
-                  additionalProperties: true
-                  description: Variables for the query
+            examples:
+              example0:
+                summary: get people - names only
+                value:
+                  query: "{ people { count next results { name } } }"
+              example1:
+                summary: get people's names and starships
+                value:
+                  query: "{ people(page: 2) { next results { name starships } } }"
+              example2:
+                summary: get person's name and films from /api/people/6
+                value:
+                  query: "{ person(id: 6) { name films } }"
       responses:
         200:
           description: GraphQL response
