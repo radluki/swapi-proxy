@@ -1,37 +1,35 @@
 import { Injectable } from '@nestjs/common';
-import { HttpRequestSender } from './http-request-sender';
 import { createLogger } from './logger-factory';
 import { getCounterObj } from './utils';
+import { CachedApiProxyService } from './cached-api-proxy.service';
 
 @Injectable()
 export class OpeningCrawlService {
   private readonly logger = createLogger(OpeningCrawlService.name);
-  private readonly apiDomainUrl: string = 'http://localhost:3000';
-  private filmsUrl: string;
-  private peopleUrl: string;
+  private readonly filmsUrl: string = '/api/films/';
+  private readonly peopleUrl: string = '/api/people/';
 
-  constructor(private readonly httpSender: HttpRequestSender) {
-    this.filmsUrl = `${this.apiDomainUrl}/api/films/`;
-    this.peopleUrl = `${this.apiDomainUrl}/api/people/`;
-  }
+  constructor(private readonly cachedApiProxyService: CachedApiProxyService) {}
 
   private async getAllPages(url: string): Promise<any[]> {
     let nextUrl = url;
     let results = [];
     while (nextUrl) {
-      const response = await this.httpSender.get(nextUrl);
+      const response = JSON.parse(
+        await this.cachedApiProxyService.get(nextUrl),
+      );
+
       results = results.concat(response.results);
 
       this.logger.debug(`Progress: ${results.length}/${response.count}`);
       this.logger.debug(`Fetched ${nextUrl}: ${JSON.stringify(response)}`);
-
-      nextUrl = response.next ? this.substituteDomain(response.next) : null;
+      nextUrl = response.next ? this.removeDomain(response.next) : null;
     }
     return results;
   }
 
-  private substituteDomain(url: string): string {
-    return url.replace('https://swapi.dev', this.apiDomainUrl);
+  private removeDomain(url: string): string {
+    return url.replace('https://swapi.dev', '');
   }
 
   private async getCleanedMergedOpeningCrawls(): Promise<string> {

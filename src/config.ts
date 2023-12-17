@@ -18,7 +18,6 @@ function getLogLevel(logLevelEnvVar: string): LogLevel[] {
     ? <LogLevel>logLevelEnvVar
     : <LogLevel>'log';
   const LEVELS = LOG_LEVELS.slice(0, LOG_LEVELS.indexOf(logLevel) + 1);
-  console.log(LEVELS);
   return LEVELS;
 }
 

@@ -1,30 +1,31 @@
 import { OpeningCrawlService } from './opening-crawl.service';
-import { HttpRequestSender } from './http-request-sender';
+import { CachedApiProxyService } from './cached-api-proxy.service';
 import { mock, instance, when, reset } from 'ts-mockito';
 
 describe('OpeningCrawlService', () => {
   let sut: OpeningCrawlService;
-  let httpRequestSenderMock: HttpRequestSender;
-
-  const filmsUrl = 'http://localhost:3000/api/films/';
-  const peopleUrl = 'http://localhost:3000/api/people/';
+  let cachedApiProxyServiceMock: CachedApiProxyService;
 
   beforeAll(async () => {
-    httpRequestSenderMock = mock<HttpRequestSender>();
-    sut = new OpeningCrawlService(instance(httpRequestSenderMock));
+    cachedApiProxyServiceMock = mock<CachedApiProxyService>();
+    sut = new OpeningCrawlService(instance(cachedApiProxyServiceMock));
   });
 
   beforeEach(async () => {
-    reset(httpRequestSenderMock);
+    reset(cachedApiProxyServiceMock);
   });
 
   it('countWords', async () => {
-    when(httpRequestSenderMock.get(filmsUrl)).thenResolve({
+    const getResp = {
       results: [
         { opening_crawl: ' one,.,. !@two,!     R2-D2\nthree....' },
         { opening_crawl: '\none\r\ntwo    three,\rthree!\nthree\n' },
       ],
-    });
+    };
+    const serializedGetResp = JSON.stringify(getResp);
+    when(cachedApiProxyServiceMock.get('/api/films/')).thenResolve(
+      serializedGetResp,
+    );
 
     const serializedObj = await sut.countWords();
     const obj = JSON.parse(serializedObj);
@@ -38,17 +39,25 @@ describe('OpeningCrawlService', () => {
   });
 
   it('getNamesWithTheMostOccurences', async () => {
-    when(httpRequestSenderMock.get(peopleUrl)).thenResolve({
+    const page1 = {
       next: 'https://swapi.dev/api/people/?page=2',
       results: [{ name: 'Luke Skywalker' }, { name: 'Leia Morgana' }],
-    });
-    when(
-      httpRequestSenderMock.get('http://localhost:3000/api/people/?page=2'),
-    ).thenResolve({
+    };
+    const serializedPage1 = JSON.stringify(page1);
+    when(cachedApiProxyServiceMock.get('/api/people/')).thenResolve(
+      serializedPage1,
+    );
+
+    const page2 = {
       next: null,
       results: [{ name: 'Dooku' }, { name: 'Han Solo' }],
-    });
-    when(httpRequestSenderMock.get(filmsUrl)).thenResolve({
+    };
+    const serializedPage2 = JSON.stringify(page2);
+    when(cachedApiProxyServiceMock.get('/api/people/?page=2')).thenResolve(
+      serializedPage2,
+    );
+
+    const filmsResp = {
       results: [
         { opening_crawl: ' Luke\r\nSkYwalker, Luke, Dooku, ' },
         {
@@ -56,7 +65,11 @@ describe('OpeningCrawlService', () => {
             '\none\r\ntwo Luke Han  Han Solo Dooku Luke  skywalker ree\n',
         },
       ],
-    });
+    };
+    const serializedFilmsResp = JSON.stringify(filmsResp);
+    when(cachedApiProxyServiceMock.get('/api/films/')).thenResolve(
+      serializedFilmsResp,
+    );
 
     const serializedObj = await sut.getNamesWithTheMostOccurences();
     const obj = JSON.parse(serializedObj);
