@@ -6,9 +6,12 @@ import { createLogger } from './logger-factory';
 export class HttpRequestSender {
   private readonly logger = createLogger(HttpRequestSender.name);
 
-  async get(url: string): Promise<any | undefined> {
+  async get(url: string): Promise<string> {
     try {
-      const response = await axios.get(url);
+      const configDisablingBodyParsing = {
+        transformResponse: [(data) => data],
+      };
+      const response = await axios.get(url, configDisablingBodyParsing);
       if (response.status === 200) {
         return response.data;
       }

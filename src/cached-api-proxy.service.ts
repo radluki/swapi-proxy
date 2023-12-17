@@ -18,7 +18,7 @@ export class CachedApiProxyService {
     );
   }
 
-  private async getFromCache(key: string): Promise<string | null> {
+  private async getFromCache(key: string): Promise<string> {
     try {
       const cachedValue = await this.cacheService.get(key);
       if (cachedValue) {
@@ -32,7 +32,7 @@ export class CachedApiProxyService {
     return null;
   }
 
-  private async getFromApi(relativeUrl: string): Promise<string | null> {
+  private async getFromApi(relativeUrl: string): Promise<string> {
     this.logger.log(`Fetching data directly from api for "${relativeUrl}"`);
     const responseDataStr = await this.apiProxyService.get(relativeUrl);
     responseDataStr && this.cacheService.set(relativeUrl, responseDataStr);

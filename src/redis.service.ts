@@ -34,7 +34,7 @@ export class RedisService implements CacheService {
     }
   }
 
-  async get(key: string): Promise<string | null> {
+  async get(key: string): Promise<string> {
     if ((await this.redis.exists(key)) !== 1) {
       return null;
     }

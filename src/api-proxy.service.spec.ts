@@ -28,7 +28,7 @@ describe('ApiProxyService', () => {
 
   describe('get', () => {
     it('should return serialized value when axios api call returns resp.data', async () => {
-      when(requestSenderMock.get(full_url)).thenResolve(value);
+      when(requestSenderMock.get(full_url)).thenResolve(valueStr);
       const result = await sut.get(relativeUrl);
       expect(result).toBe(valueStr);
       verify(requestSenderMock.get(full_url)).once();

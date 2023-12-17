@@ -15,8 +15,7 @@ export class ApiProxyService {
     const fullUrl = `${this.apiUrl}${relativeUrl}`;
     this.logger.log(`Fetching data from url: ${fullUrl}`);
     const responseData = await this.httpReqSender.get(`${fullUrl}`);
-    const responseStr = JSON.stringify(responseData);
-    this.logger.debug(`Fetched data: ${responseStr}`);
-    return responseStr || null;
+    this.logger.debug(`Fetched data: ${responseData}`);
+    return responseData || null;
   }
 }
