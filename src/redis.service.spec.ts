@@ -1,4 +1,4 @@
-import { mock, instance, when, verify } from 'ts-mockito';
+import { mock, instance, when, verify, reset } from 'ts-mockito';
 import { RedisService } from './redis.service';
 import { Redis } from 'ioredis';
 
@@ -9,9 +9,13 @@ describe('RedisService', () => {
   const key = 'KEY';
   const value = 'VALUE';
 
-  beforeEach(async () => {
+  beforeAll(async () => {
     redisMock = mock<Redis>();
     sut = new RedisService(instance(redisMock));
+  });
+
+  beforeEach(async () => {
+    reset(redisMock);
   });
 
   describe('get', () => {

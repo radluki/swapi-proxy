@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { HttpRequestSender } from './http-request-sender';
 import { createLogger } from './logger-factory';
+import { getCounterObj } from './utils';
 
 @Injectable()
 export class OpeningCrawlService {
@@ -22,8 +23,7 @@ export class OpeningCrawlService {
       results = results.concat(response.results);
 
       this.logger.debug(`Progress: ${results.length}/${response.count}`);
-      const responseStr = JSON.stringify(response);
-      this.logger.log(`Fetched ${nextUrl}: ${responseStr}`);
+      this.logger.debug(`Fetched ${nextUrl}: ${JSON.stringify(response)}`);
 
       nextUrl = response.next ? this.substituteDomain(response.next) : null;
     }
@@ -32,18 +32,6 @@ export class OpeningCrawlService {
 
   private substituteDomain(url: string): string {
     return url.replace('https://swapi.dev', this.apiDomainUrl);
-  }
-
-  private getCounterObj(array: string[]): { [key: string]: number } {
-    let countObj: { [key: string]: number } = {};
-    for (const element of array) {
-      if (countObj.hasOwnProperty(element)) {
-        countObj[element]++;
-      } else {
-        countObj[element] = 1;
-      }
-    }
-    return countObj;
   }
 
   private async getCleanedMergedOpeningCrawls(): Promise<string> {
@@ -61,7 +49,7 @@ export class OpeningCrawlService {
   async countWords(): Promise<string> {
     const mergedOpeningCrawls = await this.getCleanedMergedOpeningCrawls();
     const words = mergedOpeningCrawls.split(/\s+/);
-    const counterObj = this.getCounterObj(words);
+    const counterObj = getCounterObj(words);
     return JSON.stringify(counterObj);
   }
 
@@ -69,7 +57,7 @@ export class OpeningCrawlService {
     text: string,
     names: string[],
   ): { [key: string]: number } {
-    let countObj: { [key: string]: number } = {};
+    const countObj: { [key: string]: number } = {};
     for (const element of names) {
       const count = text.split(element).length - 1;
       if (count > 0) countObj[element] = count;
@@ -94,13 +82,10 @@ export class OpeningCrawlService {
       names,
     );
 
-    const maxValue = Object.values(nameOccuranceCounter).reduce(
-      (a, b) => (a > b ? a : b),
-      0,
-    );
-    const maxNames = Object.keys(nameOccuranceCounter).filter(
-      (key) => nameOccuranceCounter[key] === maxValue,
-    );
+    const maxValue = Math.max(...Object.values(nameOccuranceCounter));
+    const hasMaxCount = (name: string) =>
+      nameOccuranceCounter[name] === maxValue;
+    const maxNames = Object.keys(nameOccuranceCounter).filter(hasMaxCount);
     return JSON.stringify(maxNames);
   }
 }

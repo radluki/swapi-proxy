@@ -1,6 +1,6 @@
 import { ApiProxyService } from './api-proxy.service';
 import { HttpRequestSender } from './http-request-sender';
-import { mock, instance, when, anything, verify } from 'ts-mockito';
+import { mock, instance, when, anything, verify, reset } from 'ts-mockito';
 
 describe('ApiProxyService', () => {
   let sut: ApiProxyService;
@@ -20,6 +20,10 @@ describe('ApiProxyService', () => {
   beforeAll(async () => {
     requestSenderMock = mock<HttpRequestSender>();
     sut = new ApiProxyService(api_url, instance(requestSenderMock));
+  });
+
+  beforeEach(async () => {
+    reset(requestSenderMock);
   });
 
   describe('get', () => {

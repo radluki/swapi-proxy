@@ -3,9 +3,12 @@ import { AppModule } from './app.module';
 import { AnyExceptionFilter } from './esception.filter';
 import * as swaggerUi from 'swagger-ui-express';
 import * as YAML from 'yamljs';
+import config from './config';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create(AppModule, {
+    logger: config.logLevel,
+  });
   app.useGlobalFilters(new AnyExceptionFilter());
 
   setUpSwagger(app);

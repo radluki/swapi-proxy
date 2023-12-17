@@ -1,4 +1,4 @@
-import { instance, mock, when, verify, anything } from 'ts-mockito';
+import { instance, mock, when, verify, anything, reset } from 'ts-mockito';
 import { ApiProxyService } from './api-proxy.service';
 import { CachedApiProxyService } from './cached-api-proxy.service';
 import { CacheService } from './redis.service';
@@ -16,9 +16,14 @@ describe('CachedApiProxyService', () => {
   };
   const valueStr = JSON.stringify(value);
 
-  beforeEach(async () => {
+  beforeAll(async () => {
     apiProxyServiceMock = mock<ApiProxyService>();
     cacheServiceMock = mock<CacheService>();
+  });
+
+  beforeEach(async () => {
+    reset(apiProxyServiceMock);
+    reset(cacheServiceMock);
     sut = new CachedApiProxyService(
       instance(apiProxyServiceMock),
       instance(cacheServiceMock),

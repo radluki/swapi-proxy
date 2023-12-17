@@ -12,7 +12,7 @@ export class GraphqlService {
     page && queries.push(`page=${page}`);
     const queryStr = queries.length ? `?${queries.join('&')}` : '';
     const url = `http://localhost:3000/api/people/${queryStr}`;
-    this.logger.debug(`url: ${url}`);
+    this.logger.debug(`people url: ${url}`);
     const response = await axios.get(url);
     this.logger.debug(`response.data: ${JSON.stringify(response.data)}`);
     return response.data;
@@ -20,7 +20,7 @@ export class GraphqlService {
 
   async getPerson(id: number): Promise<any> {
     const url = `http://localhost:3000/api/people/${id}`;
-    this.logger.debug(`url: ${url}`);
+    this.logger.debug(`person url: ${url}`);
     const response = await axios.get(url);
     this.logger.debug(`response.data: ${JSON.stringify(response.data)}`);
     return response.data;

@@ -28,7 +28,7 @@ export class RedisService implements CacheService {
   async set(key: string, value: string) {
     try {
       await this.redis.set(key, value, 'EX', SECONDS_IN_24H);
-      this.logger.log(`Key set: ${key}`);
+      this.logger.log(`Key ${key} set successfully`);
     } catch (err) {
       this.logger.error(`Error setting key: ${err}`);
     }

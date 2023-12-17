@@ -33,7 +33,7 @@ export class CachedApiProxyService {
   }
 
   private async getFromApi(relativeUrl: string): Promise<string | null> {
-    this.logger.log(`Fetching data directly from api for key "${relativeUrl}"`);
+    this.logger.log(`Fetching data directly from api for "${relativeUrl}"`);
     const responseDataStr = await this.apiProxyService.get(relativeUrl);
     responseDataStr && this.cacheService.set(relativeUrl, responseDataStr);
     return responseDataStr;

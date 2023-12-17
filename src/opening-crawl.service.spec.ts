@@ -1,6 +1,6 @@
 import { OpeningCrawlService } from './opening-crawl.service';
 import { HttpRequestSender } from './http-request-sender';
-import { mock, instance, when } from 'ts-mockito';
+import { mock, instance, when, reset } from 'ts-mockito';
 
 describe('OpeningCrawlService', () => {
   let sut: OpeningCrawlService;
@@ -9,9 +9,13 @@ describe('OpeningCrawlService', () => {
   const filmsUrl = 'http://localhost:3000/api/films/';
   const peopleUrl = 'http://localhost:3000/api/people/';
 
-  beforeEach(async () => {
+  beforeAll(async () => {
     httpRequestSenderMock = mock<HttpRequestSender>();
     sut = new OpeningCrawlService(instance(httpRequestSenderMock));
+  });
+
+  beforeEach(async () => {
+    reset(httpRequestSenderMock);
   });
 
   it('countWords', async () => {
