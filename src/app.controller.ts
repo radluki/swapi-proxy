@@ -1,14 +1,14 @@
-import { Controller, Get, Req } from '@nestjs/common';
+import { Controller, Get, Inject, Req } from '@nestjs/common';
 import { CachedApiProxyService } from './cached-api-proxy.service';
-import { createLogger } from './logger-factory';
 import { Request } from 'express';
-import { OpeningCrawlService } from './opening-crawl.service';
+import { IOpeningCrawlsService } from './opening-crawl.service';
 
 @Controller('api')
 export class AppController {
   constructor(
     private readonly cachedApiProxyService: CachedApiProxyService,
-    private readonly openingCrawlService: OpeningCrawlService,
+    @Inject('IOpeningCrawlsService')
+    private readonly openingCrawlsService: IOpeningCrawlsService,
   ) {}
 
   @Get('healthcheck')
@@ -18,12 +18,12 @@ export class AppController {
 
   @Get('films/opening-crawls/word-counts')
   async getCountedWordsFromOpeningCrawls() {
-    return await this.openingCrawlService.countWords();
+    return await this.openingCrawlsService.countWords();
   }
 
   @Get('/films/opening-crawls/people/most-appearances')
   async getMostMentionedNamesInOpeningCrawls() {
-    return await this.openingCrawlService.getNamesWithTheMostOccurences();
+    return await this.openingCrawlsService.getNamesWithTheMostOccurences();
   }
 
   @Get(':resource(films|species|vehicles|starships|people|planets)*')

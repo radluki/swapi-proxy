@@ -1,14 +1,14 @@
-import { OpeningCrawlService } from './opening-crawl.service';
+import { OpeningCrawlsService } from './opening-crawl.service';
 import { CachedApiProxyService } from './cached-api-proxy.service';
 import { mock, instance, when, reset } from 'ts-mockito';
 
-describe('OpeningCrawlService', () => {
-  let sut: OpeningCrawlService;
+describe('OpeningCrawlsService', () => {
+  let sut: OpeningCrawlsService;
   let cachedApiProxyServiceMock: CachedApiProxyService;
 
   beforeAll(async () => {
     cachedApiProxyServiceMock = mock<CachedApiProxyService>();
-    sut = new OpeningCrawlService(instance(cachedApiProxyServiceMock));
+    sut = new OpeningCrawlsService(instance(cachedApiProxyServiceMock));
   });
 
   beforeEach(async () => {

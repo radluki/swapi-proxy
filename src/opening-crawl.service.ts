@@ -3,13 +3,43 @@ import { createLogger } from './logger-factory';
 import { getCounterObj } from './utils';
 import { CachedApiProxyService } from './cached-api-proxy.service';
 
+export interface IOpeningCrawlsService {
+  countWords(): Promise<string>;
+  getNamesWithTheMostOccurences(): Promise<string>;
+}
+
 @Injectable()
-export class OpeningCrawlService {
-  private readonly logger = createLogger(OpeningCrawlService.name);
+export class OpeningCrawlsService implements IOpeningCrawlsService {
+  private readonly logger = createLogger(OpeningCrawlsService.name);
   private readonly filmsUrl: string = '/api/films/';
   private readonly peopleUrl: string = '/api/people/';
 
   constructor(private readonly cachedApiProxyService: CachedApiProxyService) {}
+
+  async countWords(): Promise<string> {
+    const mergedOpeningCrawls = await this.getCleanedMergedOpeningCrawls();
+    const words = mergedOpeningCrawls.split(/\s+/);
+    const counterObj = getCounterObj(words);
+    return JSON.stringify(counterObj);
+  }
+
+  async getNamesWithTheMostOccurences(): Promise<string> {
+    const counterObj = await this.countNameOccurencesInOpeningCrawls();
+    const maxValue = Math.max(...Object.values(counterObj));
+    const hasMaxCount = (name: string) => counterObj[name] === maxValue;
+    const maxNames = Object.keys(counterObj).filter(hasMaxCount);
+    return JSON.stringify(maxNames);
+  }
+
+  private async getCleanedLowercaseNames(): Promise<string[]> {
+    const response = await this.getAllPages(this.peopleUrl);
+    return response.map((person) =>
+      person.name
+        .replaceAll(/[^\w\s]+/g, '')
+        .toLowerCase()
+        .trim(),
+    );
+  }
 
   private async getAllPages(url: string): Promise<any[]> {
     let nextUrl = url;
@@ -23,13 +53,12 @@ export class OpeningCrawlService {
 
       this.logger.debug(`Progress: ${results.length}/${response.count}`);
       this.logger.debug(`Fetched ${nextUrl}: ${JSON.stringify(response)}`);
-      nextUrl = response.next ? this.removeDomain(response.next) : null;
+
+      nextUrl = response.next
+        ? response.next.replace('https://swapi.dev', '')
+        : null;
     }
     return results;
-  }
-
-  private removeDomain(url: string): string {
-    return url.replace('https://swapi.dev', '');
   }
 
   private async getCleanedMergedOpeningCrawls(): Promise<string> {
@@ -44,46 +73,17 @@ export class OpeningCrawlService {
     return openingCrawls;
   }
 
-  async countWords(): Promise<string> {
-    const mergedOpeningCrawls = await this.getCleanedMergedOpeningCrawls();
-    const words = mergedOpeningCrawls.split(/\s+/);
-    const counterObj = getCounterObj(words);
-    return JSON.stringify(counterObj);
-  }
-
-  private countNameOccurences(
-    text: string,
-    names: string[],
-  ): { [key: string]: number } {
+  private async countNameOccurencesInOpeningCrawls(): Promise<{
+    [key: string]: number;
+  }> {
+    const [names, text] = await Promise.all([
+      this.getCleanedLowercaseNames(),
+      this.getCleanedMergedOpeningCrawls(),
+    ]);
     const countObj: { [key: string]: number } = {};
-    for (const element of names) {
-      const count = text.split(element).length - 1;
-      if (count > 0) countObj[element] = count;
+    for (const name of names) {
+      countObj[name] = text.split(name).length - 1;
     }
     return countObj;
-  }
-
-  async getNamesWithTheMostOccurences(): Promise<string> {
-    const response = await this.getAllPages(this.peopleUrl);
-    const names = response
-      .map((film) =>
-        film.name
-          .replaceAll(/[^\w\s]+/g, '')
-          .toLowerCase()
-          .trim(),
-      )
-      .sort();
-    this.logger.debug(`namesSize: ${names.length}`);
-    const mergedOpeningCrawls = await this.getCleanedMergedOpeningCrawls();
-    const nameOccuranceCounter = this.countNameOccurences(
-      mergedOpeningCrawls,
-      names,
-    );
-
-    const maxValue = Math.max(...Object.values(nameOccuranceCounter));
-    const hasMaxCount = (name: string) =>
-      nameOccuranceCounter[name] === maxValue;
-    const maxNames = Object.keys(nameOccuranceCounter).filter(hasMaxCount);
-    return JSON.stringify(maxNames);
   }
 }

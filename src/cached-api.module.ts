@@ -3,7 +3,7 @@ import Redis from 'ioredis';
 import { RedisClient, RedisService } from './redis.service';
 import { CachedApiProxyService } from './cached-api-proxy.service';
 import { HttpRequestSender } from './http-request-sender';
-import { OpeningCrawlService } from './opening-crawl.service';
+import { OpeningCrawlsService } from './opening-crawl.service';
 
 @Module({
   providers: [
@@ -26,8 +26,11 @@ import { OpeningCrawlService } from './opening-crawl.service';
     },
     HttpRequestSender,
     CachedApiProxyService,
-    OpeningCrawlService,
+    {
+      provide: 'IOpeningCrawlsService',
+      useClass: OpeningCrawlsService,
+    },
   ],
-  exports: [CachedApiProxyService, OpeningCrawlService],
+  exports: [CachedApiProxyService, 'IOpeningCrawlsService'],
 })
 export class CachedApiModule {}
