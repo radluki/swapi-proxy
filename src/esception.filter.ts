@@ -1,4 +1,3 @@
-// any-exception.filter.ts
 import {
   ExceptionFilter,
   Catch,
@@ -13,11 +12,7 @@ export class AnyExceptionFilter implements ExceptionFilter {
     const ctx = host.switchToHttp();
     const response = ctx.getResponse();
     const request = ctx.getRequest();
-    const status =
-      exception.status ||
-      (exception instanceof HttpException
-        ? exception.getStatus()
-        : HttpStatus.INTERNAL_SERVER_ERROR);
+    const status = this.getStatus(exception);
 
     response.status(status).json({
       statusCode: status,
@@ -25,5 +20,15 @@ export class AnyExceptionFilter implements ExceptionFilter {
       path: request.url,
       message: exception?.message || 'Internal server error',
     });
+  }
+
+  private getStatus(exception: any): number {
+    if (exception instanceof HttpException) {
+      return exception.getStatus();
+    }
+    if (exception?.response?.status) {
+      return exception.response.status;
+    }
+    return HttpStatus.INTERNAL_SERVER_ERROR;
   }
 }
