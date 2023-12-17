@@ -21,6 +21,10 @@ import { OpeningCrawlsService } from './opening-crawl.service';
       useValue: 'https://swapi.dev',
     },
     {
+      provide: 'SwapiProxyDomain',
+      useValue: 'http://localhost:3000',
+    },
+    {
       provide: 'CacheService',
       useClass: RedisService,
     },

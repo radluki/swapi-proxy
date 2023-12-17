@@ -8,7 +8,8 @@ export class CachedApiProxyService {
   private readonly logger = createLogger(CachedApiProxyService.name);
 
   constructor(
-    @Inject('SwapiUrl') private readonly apiUrl: string,
+    @Inject('SwapiUrl') private readonly swapiUrl: string,
+    @Inject('SwapiProxyDomain') private readonly swapiProxyDomain: string,
     private readonly httpReqSender: HttpRequestSender,
     @Inject('CacheService') private readonly cacheService: CacheService,
   ) {}
@@ -34,9 +35,17 @@ export class CachedApiProxyService {
 
   private async getFromSwapi(relativeUrl: string): Promise<string> {
     this.logger.log(`Fetching data directly from api for "${relativeUrl}"`);
-    const fullUrl = `${this.apiUrl}${relativeUrl}`;
+    const fullUrl = `${this.swapiUrl}${relativeUrl}`;
     const responseDataStr = await this.httpReqSender.get(`${fullUrl}`);
-    responseDataStr && this.cacheService.set(relativeUrl, responseDataStr);
-    return responseDataStr;
+
+    if (!responseDataStr) {
+      return responseDataStr;
+    }
+    const dataWithOverridenDomain = responseDataStr.replaceAll(
+      this.swapiUrl,
+      this.swapiProxyDomain,
+    );
+    this.cacheService.set(relativeUrl, dataWithOverridenDomain);
+    return dataWithOverridenDomain;
   }
 }

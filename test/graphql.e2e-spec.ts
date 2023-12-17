@@ -3,6 +3,8 @@ import Redis from 'ioredis';
 import { APP_URL, createRedisClient, maybeFlushRedis } from './common';
 
 describe('GraphQl api (e2e)', () => {
+  const swapiDomainName = 'https://swapi.dev';
+  const swapiProxyDomainName = 'http://localhost:3000';
   const req = request(APP_URL);
   let redis: Redis;
 
@@ -28,7 +30,7 @@ describe('GraphQl api (e2e)', () => {
     expect(data.people.count).toBe(82);
     expect(data.people.results).toBeDefined();
     expect(data.people.next).toBeDefined();
-    expect(data.people.next).toBe('https://swapi.dev/api/people/?page=2');
+    expect(data.people.next).toBe(`${swapiProxyDomainName}/api/people/?page=2`);
     expect(data.people.results.length).toBe(10);
     const firstPerson = data.people.results[0];
     expect(firstPerson).toStrictEqual({ name: 'Luke Skywalker' });
@@ -47,7 +49,7 @@ describe('GraphQl api (e2e)', () => {
     expect(data.people.count).toBe(82);
     expect(data.people.results).toBeDefined();
     expect(data.people.next).toBeDefined();
-    expect(data.people.next).toBe('https://swapi.dev/api/people/?page=3');
+    expect(data.people.next).toBe(`${swapiProxyDomainName}/api/people/?page=3`);
     expect(data.people.results.length).toBe(10);
     const firstPerson = data.people.results[0];
     expect(firstPerson).toStrictEqual({ name: 'Anakin Skywalker' });
@@ -101,6 +103,8 @@ describe('GraphQl api (e2e)', () => {
     expect(person.films).toBeDefined();
     expect(person.films).toBeInstanceOf(Array);
     expect(person.films.length).toBe(6);
-    expect(person.films[3]).toStrictEqual('https://swapi.dev/api/films/4/');
+    expect(person.films[3]).toStrictEqual(
+      `${swapiProxyDomainName}/api/films/4/`,
+    );
   });
 });

@@ -55,8 +55,9 @@ export class OpeningCrawlsService implements IOpeningCrawlsService {
       this.logger.debug(`Fetched ${nextUrl}: ${JSON.stringify(response)}`);
 
       nextUrl = response.next
-        ? response.next.replace('https://swapi.dev', '')
+        ? response.next.replace(/https?:\/\/.+?\//, '/')
         : null;
+      this.logger.log(`Next url: ${nextUrl}`);
     }
     return results;
   }

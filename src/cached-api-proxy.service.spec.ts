@@ -16,6 +16,7 @@ describe('CachedApiProxyService', () => {
   };
   const valueStr = JSON.stringify(value);
   const swapiUrl = 'https://swapi.dev';
+  const swapiProxyDomain = 'http://swapi-proxy.dev';
   const fullUrlWithKey = `${swapiUrl}${key}`;
 
   beforeAll(async () => {
@@ -28,6 +29,7 @@ describe('CachedApiProxyService', () => {
     reset(cacheServiceMock);
     sut = new CachedApiProxyService(
       swapiUrl,
+      swapiProxyDomain,
       instance(httpRequestSenderMock),
       instance(cacheServiceMock),
     );

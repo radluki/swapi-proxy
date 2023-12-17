@@ -35,7 +35,7 @@ describe('REST proxy api (e2e)', () => {
     const body = JSON.parse(response.text);
     expect(body.name).toBe('Sand Crawler');
     expect(body.model).toBe('Digger Crawler');
-    expect(body.url).toBe('https://swapi.dev/api/vehicles/4/');
+    expect(body.url).toBe('http://localhost:3000/api/vehicles/4/');
   });
 
   it('GET /api/starships/2/', async () => {
@@ -44,7 +44,7 @@ describe('REST proxy api (e2e)', () => {
     const body = JSON.parse(response.text);
     expect(body.name).toBe('CR90 corvette');
     expect(body.model).toBe('CR90 corvette');
-    expect(body.url).toBe('https://swapi.dev/api/starships/2/');
+    expect(body.url).toBe('http://localhost:3000/api/starships/2/');
   });
 
   it('GET /api/people/2/', async () => {
@@ -53,7 +53,7 @@ describe('REST proxy api (e2e)', () => {
     const body = JSON.parse(response.text);
     expect(body.name).toBe('C-3PO');
     expect(body.height).toBe('167');
-    expect(body.url).toBe('https://swapi.dev/api/people/2/');
+    expect(body.url).toBe('http://localhost:3000/api/people/2/');
   });
 
   it('GET /api/planets/2/', async () => {
@@ -62,7 +62,7 @@ describe('REST proxy api (e2e)', () => {
     const body = JSON.parse(response.text);
     expect(body.name).toBe('Alderaan');
     expect(body.rotation_period).toBe('24');
-    expect(body.url).toBe('https://swapi.dev/api/planets/2/');
+    expect(body.url).toBe('http://localhost:3000/api/planets/2/');
   });
 
   it('GET /api/planets', async () => {
@@ -70,7 +70,7 @@ describe('REST proxy api (e2e)', () => {
     expect(response.statusCode).toBe(200);
     const body = JSON.parse(response.text);
     expect(body.count).toBe(60);
-    expect(body.next).toBe('https://swapi.dev/api/planets/?page=2');
+    expect(body.next).toBe('http://localhost:3000/api/planets/?page=2');
     expect(body.results.length).toBeGreaterThan(0);
     expect(body.results[0].name).toBe('Tatooine');
   });
@@ -83,7 +83,7 @@ describe('REST proxy api (e2e)', () => {
     expect(response.statusCode).toBe(200);
     const body = JSON.parse(response.text);
     expect(body.count).toBe(60);
-    expect(body.next).toBe('https://swapi.dev/api/planets/?page=4');
+    expect(body.next).toBe('http://localhost:3000/api/planets/?page=4');
     expect(body.results.length).toBeGreaterThan(0);
     expect(body.results[0].name).toBe('Eriadu');
   });

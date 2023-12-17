@@ -16,7 +16,7 @@ function getLogLevel(logLevelEnvVar: string): LogLevel[] {
   ];
   const logLevel: LogLevel = (<string[]>LOG_LEVELS).includes(logLevelEnvVar)
     ? <LogLevel>logLevelEnvVar
-    : <LogLevel>'log';
+    : <LogLevel>'debug';
   const LEVELS = LOG_LEVELS.slice(0, LOG_LEVELS.indexOf(logLevel) + 1);
   return LEVELS;
 }
