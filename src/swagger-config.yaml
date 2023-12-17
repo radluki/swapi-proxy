@@ -1,25 +1,97 @@
 openapi: 3.0.0
 info:
-  title: Example API
+  title: Swapi-Proxy API
   version: 1.0.0
-  description: Proxy API for Star Wars data from swapi.dev
+  description: Proxy API for Star Wars data from [swapi.dev documentation](https://swapi.dev/documentation)
 servers:
   - url: http://localhost:3000
     description: Local development server
 
 paths:
-  /api/healthcheck:
+  /api/{resource}:
     get:
-      summary: Health Check
-      description: Check the health of the server
+      summary: get swapi resources
+      description: Proxy endpoint to swapi resources
+      externalDocs:
+        description: swapi.dev documentation
+        url: https://swapi.dev/documentation
+      parameters:
+        - in: path
+          name: resource
+          required: true
+          schema:
+            type: string
+            enum: [films, species, vehicles, starships, people, planets]
+          description: Type of resource
+        - in: query
+          name: page
+          required: false
+          schema:
+            type: integer
+            default: 1
+          description: Page number for pagination
+        - in: query
+          name: search
+          required: false
+          schema:
+            type: string
+          description: Search term to filter the results
       responses:
         200:
-          description: HealthCheck Successful
+          description: Proxy data for the requested resource
           content:
-            text/html:
+            application/json:
               schema:
-                type: string
-                example: '<h1>HealthCheck</h1><h3>server is alive</h3>'
+                type: object
+                properties:
+                  count:
+                    type: integer
+                    description: Total number of results
+                  next:
+                    type: string
+                    nullable: true
+                    description: URL for the next swapi page of results
+                  previous:
+                    type: string
+                    nullable: true
+                    description: URL for the previous swapi page of results
+                  results:
+                    type: array
+                    items:
+                      type: object
+        404:
+          description: Resource not found
+
+  /api/{resource}/{id}:
+    get:
+      summary: Get a specific swapi resource by ID
+      description: Retrieves detailed information about a specific resource identified by ID.
+      externalDocs:
+        description: swapi.dev documentation
+        url: https://swapi.dev/documentation
+      parameters:
+        - in: path
+          name: resource
+          required: true
+          schema:
+            type: string
+            enum: [films, species, vehicles, starships, people, planets]
+          description: The type of resource
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+          description: The unique identifier of the resource
+      responses:
+        200:
+          description: Successful response with the details of the resource
+          content:
+            application/json:
+              schema:
+                type: object
+        404:
+          description: Resource not found
 
   /api/films/opening-crawls/word-counts:
     get:
@@ -51,70 +123,6 @@ paths:
                   type: string
                   example: "Luke Skywalker"
 
-  /api/{resource}:
-    get:
-      summary: API Proxy
-      description: Proxy endpoint to swapi resources
-      parameters:
-        - in: path
-          name: resource
-          required: true
-          schema:
-            type: string
-            enum: [films, species, vehicles, starships, people, planets]
-          description: Type of resource
-        - in: query
-          name: page
-          required: false
-          schema:
-            type: integer
-            default: 1
-            description: Page number for pagination
-        - in: query
-          name: search
-          required: false
-          schema:
-            type: string
-            description: Search term to filter the results
-      responses:
-        200:
-          description: Proxy data for the requested resource
-          content:
-            application/json:
-              schema:
-                type: object
-
-  /api/{resource}/{id}:
-    get:
-      summary: Get a specific swapi resource by ID
-      description: Retrieves detailed information about a specific resource identified by ID.
-      parameters:
-        - in: path
-          name: resource
-          required: true
-          schema:
-            type: string
-            enum: [films, species, vehicles, starships, people, planets]
-            description: The type of resource
-        - in: path
-          name: id
-          required: true
-          schema:
-            type: string
-            description: The unique identifier of the resource
-      responses:
-        200:
-          description: Successful response with the details of the resource
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  data:
-                    type: object
-                    description: The data of the requested resource
-        404:
-          description: Resource not found
   /graphql:
     post:
       summary: GraphQL Endpoint
