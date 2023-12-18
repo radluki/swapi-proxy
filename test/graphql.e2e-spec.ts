@@ -3,7 +3,6 @@ import Redis from 'ioredis';
 import { APP_URL, createRedisClient, maybeFlushRedis } from './common';
 
 describe('GraphQl api (e2e)', () => {
-  const swapiDomainName = 'https://swapi.dev';
   const swapiProxyDomainName = 'http://localhost:3000';
   const req = request(APP_URL);
   let redis: Redis;
