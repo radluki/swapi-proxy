@@ -2,9 +2,12 @@ import { Controller, Get, Inject, Req } from '@nestjs/common';
 import { CachedApiProxyService } from './cached-api-proxy.service';
 import { Request } from 'express';
 import { IOpeningCrawlsService } from './opening-crawl.service';
+import { createLogger } from './logger-factory';
 
 @Controller('api')
 export class AppController {
+  private readonly logger = createLogger(AppController.name);
+
   constructor(
     private readonly cachedApiProxyService: CachedApiProxyService,
     @Inject('IOpeningCrawlsService')
@@ -40,6 +43,7 @@ export class AppController {
 
   @Get(':resource(films|species|vehicles|starships|people|planets)*')
   async proxy(@Req() request: Request) {
+    this.logger.log(`proxying ${request.url}`);
     return await this.cachedApiProxyService.get(request.url);
   }
 }

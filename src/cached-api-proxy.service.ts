@@ -46,6 +46,9 @@ export class CachedApiProxyService {
       this.swapiProxyDomain,
     );
     this.cacheService.set(relativeUrl, dataWithOverridenDomain);
+    this.logger.debug(
+      `Fetched data for "${relativeUrl}": ${dataWithOverridenDomain}`,
+    );
     return dataWithOverridenDomain;
   }
 }
