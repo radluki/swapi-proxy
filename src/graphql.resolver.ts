@@ -1,7 +1,20 @@
 import { Resolver, Query, Args, Int } from '@nestjs/graphql';
-import { GraphqlService } from './graphql.service';
-import { People, Person } from './person.type';
+import { GraphqlService, ResourceType } from './graphql.service';
+import { People, Person } from './types/person.type';
+import { Planet, Planets } from './types/planets.type';
 import { createLogger } from './logger-factory';
+
+function NameArg() {
+  return Args('name', { type: () => String, nullable: true });
+}
+
+function PageArg() {
+  return Args('page', { type: () => Int, nullable: true });
+}
+
+function IdArg() {
+  return Args('id', { type: () => Int });
+}
 
 @Resolver()
 export class GraphqlResolver {
@@ -9,18 +22,31 @@ export class GraphqlResolver {
 
   constructor(private readonly graphqlService: GraphqlService) {}
 
+  private logQuery(method: string, args: any) {
+    this.logger.log(`${method} query with args: ${JSON.stringify(args)}`);
+  }
+
   @Query(() => People)
-  async people(
-    @Args('name', { type: () => String, nullable: true }) name?: string,
-    @Args('page', { type: () => Int, nullable: true }) page?: number,
-  ) {
-    this.logger.log(`people query with name: ${name}, page: ${page}`);
-    return this.graphqlService.getPeople(name, page);
+  async people(@NameArg() name?: string, @PageArg() page?: number) {
+    this.logQuery('people', { name, page });
+    return this.graphqlService.getResources(ResourceType.People, name, page);
   }
 
   @Query(() => Person)
-  async person(@Args('id', { type: () => Int }) id: number) {
-    this.logger.log(`person query with id: ${id}`);
-    return this.graphqlService.getPerson(id);
+  async person(@IdArg() id: number) {
+    this.logQuery('person', { id });
+    return this.graphqlService.getSingleResource(ResourceType.People, id);
+  }
+
+  @Query(() => Planets)
+  async planets(@NameArg() name?: string, @PageArg() page?: number) {
+    this.logQuery('planets', { name, page });
+    return this.graphqlService.getResources(ResourceType.Planets, name, page);
+  }
+
+  @Query(() => Planet)
+  async planet(@IdArg() id: number) {
+    this.logQuery('planet', { id });
+    return this.graphqlService.getSingleResource(ResourceType.Planets, id);
   }
 }
