@@ -5,6 +5,7 @@ import { CachedApiProxyService } from './cached-api-proxy.service';
 export const enum ResourceType {
   People = 'people',
   Planets = 'planets',
+  Starships = 'starships',
 }
 
 @Injectable()
