@@ -1,5 +1,5 @@
 import { Injectable, Inject } from '@nestjs/common';
-import { createLogger } from './logger-factory';
+import { createLogger } from '../utils/logger-factory';
 
 const SECONDS_IN_24H = 86400;
 

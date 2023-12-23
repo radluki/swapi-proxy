@@ -1,5 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { AppController } from './app.controller';
+import { CachedApiController } from './cached-api.controller';
 import { CachedApiProxyService } from './cached-api-proxy.service';
 
 class CachedApiProxyServiceMock {
@@ -13,17 +13,17 @@ class OpeningCrawlServiceMock {
 describe('AppController', () => {
   let app: TestingModule;
 
-  const cachedApiProxyServiceMockMock = new CachedApiProxyServiceMock();
+  const cachedApiProxyServiceMock = new CachedApiProxyServiceMock();
   const openingCrawlsServiceMock = new OpeningCrawlServiceMock();
 
   beforeAll(async () => {
     app = await Test.createTestingModule({
       imports: [],
-      controllers: [AppController],
+      controllers: [CachedApiController],
       providers: [
         {
           provide: CachedApiProxyService,
-          useValue: cachedApiProxyServiceMockMock,
+          useValue: cachedApiProxyServiceMock,
         },
         {
           provide: 'IOpeningCrawlsService',
@@ -35,7 +35,7 @@ describe('AppController', () => {
 
   describe('healthcheck', () => {
     it('should return proper response', async () => {
-      const appController = app.get(AppController);
+      const appController = app.get(CachedApiController);
       const healthcheckResp = 'swapi-proxy is up and running';
 
       expect(await appController.healthcheck()).toBe(healthcheckResp);

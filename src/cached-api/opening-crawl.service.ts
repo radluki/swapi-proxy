@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import { createLogger } from './logger-factory';
-import { getCounterObj } from './utils';
+import { createLogger } from '../utils/logger-factory';
+import { getCounterObj } from '../utils/utils';
 import { CachedApiProxyService } from './cached-api-proxy.service';
 
 export interface IOpeningCrawlsService {

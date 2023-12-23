@@ -1,9 +1,9 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
-import { AnyExceptionFilter } from './esception.filter';
+import { AnyExceptionFilter } from './utils/esception.filter';
 import * as swaggerUi from 'swagger-ui-express';
 import * as YAML from 'yamljs';
-import config from './config';
+import config from './utils/config';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, {

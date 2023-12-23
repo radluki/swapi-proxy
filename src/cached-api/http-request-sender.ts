@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import axios from 'axios';
-import { createLogger } from './logger-factory';
+import { createLogger } from '../utils/logger-factory';
 
 @Injectable()
 export class HttpRequestSender {

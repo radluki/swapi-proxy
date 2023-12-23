@@ -2,7 +2,7 @@ import { Resolver, Query, Args, Int } from '@nestjs/graphql';
 import { GraphqlService, ResourceType } from './graphql.service';
 import { People, Person } from './types/person.type';
 import { Planet, Planets } from './types/planets.type';
-import { createLogger } from './logger-factory';
+import { createLogger } from '../utils/logger-factory';
 import { Starship, Starships } from './types/starships.type';
 import { ResourceUnion } from './types/resource.type';
 

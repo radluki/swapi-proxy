@@ -2,11 +2,11 @@ import { Controller, Get, Inject, Req } from '@nestjs/common';
 import { CachedApiProxyService } from './cached-api-proxy.service';
 import { Request } from 'express';
 import { IOpeningCrawlsService } from './opening-crawl.service';
-import { createLogger } from './logger-factory';
+import { createLogger } from '../utils/logger-factory';
 
 @Controller('api')
-export class AppController {
-  private readonly logger = createLogger(AppController.name);
+export class CachedApiController {
+  private readonly logger = createLogger(CachedApiController.name);
 
   constructor(
     private readonly cachedApiProxyService: CachedApiProxyService,

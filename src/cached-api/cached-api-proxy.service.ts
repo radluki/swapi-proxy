@@ -1,6 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { CacheService } from './redis.service';
-import { createLogger } from './logger-factory';
+import { createLogger } from '../utils/logger-factory';
 import { HttpRequestSender } from './http-request-sender';
 
 @Injectable()

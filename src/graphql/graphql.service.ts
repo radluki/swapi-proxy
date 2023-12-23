@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import { createLogger } from './logger-factory';
-import { CachedApiProxyService } from './cached-api-proxy.service';
+import { createLogger } from '../utils/logger-factory';
+import { CachedApiProxyService } from '../cached-api/cached-api-proxy.service';
 
 export const enum ResourceType {
   People = 'people',
