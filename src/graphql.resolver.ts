@@ -4,6 +4,7 @@ import { People, Person } from './types/person.type';
 import { Planet, Planets } from './types/planets.type';
 import { createLogger } from './logger-factory';
 import { Starship, Starships } from './types/starships.type';
+import { ResourceUnion } from './types/resource.type';
 
 function NameArg() {
   return Args('name', { type: () => String, nullable: true });
@@ -61,5 +62,15 @@ export class GraphqlResolver {
   async starship(@IdArg() id: number) {
     this.logQuery('starship', { id });
     return this.graphqlService.getSingleResource(ResourceType.Starships, id);
+  }
+
+  @Query(() => ResourceUnion)
+  async resource(
+    @Args('type', { type: () => String })
+    type: ResourceType,
+    @IdArg() id: number,
+  ) {
+    this.logQuery(type, { id });
+    return this.graphqlService.getSingleResource(type, id);
   }
 }
