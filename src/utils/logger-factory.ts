@@ -1,5 +1,5 @@
 import { Logger } from '@nestjs/common';
-import config from './config';
+import getConfig from '../config/configuration';
 
 class LoggerFake extends Logger {
   override log(_message: string) {} // eslint-disable-line
@@ -8,5 +8,6 @@ class LoggerFake extends Logger {
 }
 
 export function createLogger(className: string): Logger {
-  return config.disableLogs ? new LoggerFake() : new Logger(className);
+  const { disableLogs } = getConfig();
+  return disableLogs ? new LoggerFake() : new Logger(className);
 }
