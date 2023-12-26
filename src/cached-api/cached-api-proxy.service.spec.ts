@@ -2,11 +2,13 @@ import { instance, mock, when, verify, anything, reset } from 'ts-mockito';
 import { CachedApiProxyService } from './cached-api-proxy.service';
 import { CacheService } from './redis.service';
 import { HttpRequestSender } from './http-request-sender';
+import { ConfigService } from '@nestjs/config';
 
 describe('CachedApiProxyService', () => {
   let sut: CachedApiProxyService;
   let cacheServiceMock: CacheService;
   let httpRequestSenderMock: HttpRequestSender;
+  let configServiceMock: ConfigService;
 
   const key = '/api/people/1/';
   const value = {
@@ -22,16 +24,21 @@ describe('CachedApiProxyService', () => {
   beforeAll(async () => {
     cacheServiceMock = mock<CacheService>();
     httpRequestSenderMock = mock<HttpRequestSender>();
+    configServiceMock = mock<ConfigService>();
+
+    when(configServiceMock.get<string>('swapiProxyUrl')).thenReturn(
+      swapiProxyDomain,
+    );
+    when(configServiceMock.get<string>('swapiUrl')).thenReturn(swapiUrl);
   });
 
   beforeEach(async () => {
     reset(httpRequestSenderMock);
     reset(cacheServiceMock);
     sut = new CachedApiProxyService(
-      swapiUrl,
-      swapiProxyDomain,
       instance(httpRequestSenderMock),
       instance(cacheServiceMock),
+      instance(configServiceMock),
     );
   });
 

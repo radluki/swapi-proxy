@@ -5,25 +5,20 @@ import { CachedApiProxyService } from './cached-api-proxy.service';
 import { HttpRequestSender } from './http-request-sender';
 import { OpeningCrawlsService } from './opening-crawl.service';
 import { CachedApiController } from './cached-api.controller';
+import { ConfigService } from '@nestjs/config';
 
 @Module({
   providers: [
     {
       provide: 'RedisClient',
-      useFactory: (): RedisClient => {
+      useFactory: (configService: ConfigService): RedisClient => {
+        console.log('configService', configService);
         return new Redis({
-          host: 'redis',
-          port: 6379,
+          host: configService.get<string>('redis.host'),
+          port: configService.get<number>('redis.port'),
         });
       },
-    },
-    {
-      provide: 'SwapiUrl',
-      useValue: 'https://swapi.dev',
-    },
-    {
-      provide: 'SwapiProxyDomain',
-      useValue: 'http://localhost:3000',
+      inject: [ConfigService],
     },
     {
       provide: 'CacheService',

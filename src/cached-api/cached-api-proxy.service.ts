@@ -2,17 +2,24 @@ import { Inject, Injectable } from '@nestjs/common';
 import { CacheService } from './redis.service';
 import { createLogger } from '../utils/logger-factory';
 import { HttpRequestSender } from './http-request-sender';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class CachedApiProxyService {
   private readonly logger = createLogger(CachedApiProxyService.name);
+  private readonly swapiProxyDomain: string;
+  private readonly swapiUrl: string;
 
   constructor(
-    @Inject('SwapiUrl') private readonly swapiUrl: string,
-    @Inject('SwapiProxyDomain') private readonly swapiProxyDomain: string,
     private readonly httpReqSender: HttpRequestSender,
     @Inject('CacheService') private readonly cacheService: CacheService,
-  ) {}
+    configService: ConfigService,
+  ) {
+    this.swapiProxyDomain = configService.get<string>('swapiProxyUrl');
+    this.swapiUrl = configService.get<string>('swapiUrl');
+    this.logger.debug(`swapiProxyDomain: ${this.swapiProxyDomain}`);
+    this.logger.debug(`swapiUrl: ${this.swapiUrl}`);
+  }
 
   async get(relativeUrl: string): Promise<string> {
     const cachedValue = await this.getFromCache(relativeUrl);
