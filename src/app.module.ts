@@ -2,7 +2,9 @@ import { Module } from '@nestjs/common';
 import { CachedApiModule } from './cached-api/cached-api.module';
 import { GraphqlModule } from './graphql/graphql.module';
 import { ConfigModule } from '@nestjs/config';
-import configuration from './config/configuration';
+import configuration, {
+  envVariablesValidationSchema,
+} from './config/configuration';
 
 @Module({
   imports: [
@@ -11,6 +13,7 @@ import configuration from './config/configuration';
     ConfigModule.forRoot({
       isGlobal: true,
       load: [configuration],
+      validationSchema: envVariablesValidationSchema,
     }),
   ],
   providers: [],
