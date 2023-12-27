@@ -10,7 +10,8 @@ describe('CachedApiProxyService', () => {
   let httpRequestSenderMock: HttpRequestSender;
   let configServiceMock: ConfigService;
 
-  const key = '/api/people/1/';
+  const relativeUrl = '/api/people/1/';
+  const key = ':3000/api/people/1/';
   const value = {
     name: 'Luke Skywalker',
     height: '172',
@@ -19,7 +20,7 @@ describe('CachedApiProxyService', () => {
   const valueStr = JSON.stringify(value);
   const swapiUrl = 'https://swapi.dev';
   const swapiProxyDomain = 'http://swapi-proxy.dev';
-  const fullUrlWithKey = `${swapiUrl}${key}`;
+  const fullUrlWithKey = `${swapiUrl}${relativeUrl}`;
 
   beforeAll(async () => {
     cacheServiceMock = mock<CacheService>();
@@ -30,6 +31,7 @@ describe('CachedApiProxyService', () => {
       swapiProxyDomain,
     );
     when(configServiceMock.get<string>('swapiUrl')).thenReturn(swapiUrl);
+    when(configServiceMock.get<number>('PORT')).thenReturn(3000);
   });
 
   beforeEach(async () => {
@@ -46,7 +48,7 @@ describe('CachedApiProxyService', () => {
     it('should not access api when cache available', async () => {
       when(cacheServiceMock.get(key)).thenResolve(JSON.stringify(value));
 
-      const resultStr = await sut.get(key);
+      const resultStr = await sut.get(relativeUrl);
       expect(resultStr).toBe(valueStr);
 
       verify(cacheServiceMock.get(key)).once();
@@ -58,7 +60,7 @@ describe('CachedApiProxyService', () => {
       when(cacheServiceMock.get(key)).thenResolve(null);
       when(httpRequestSenderMock.get(fullUrlWithKey)).thenResolve(valueStr);
 
-      const resultStr = await sut.get(key);
+      const resultStr = await sut.get(relativeUrl);
       expect(resultStr).toBe(valueStr);
 
       verify(cacheServiceMock.get(key)).once();
@@ -70,7 +72,7 @@ describe('CachedApiProxyService', () => {
       when(cacheServiceMock.get(key)).thenResolve(null);
       when(httpRequestSenderMock.get(fullUrlWithKey)).thenResolve(null);
 
-      const result = await sut.get(key);
+      const result = await sut.get(relativeUrl);
       expect(result).toBeNull();
 
       verify(cacheServiceMock.get(key)).once();
@@ -83,7 +85,7 @@ describe('CachedApiProxyService', () => {
       when(cacheServiceMock.get(key)).thenResolve(null);
       when(httpRequestSenderMock.get(fullUrlWithKey)).thenReject(err);
 
-      await expect(sut.get(key)).rejects.toEqual(err);
+      await expect(sut.get(relativeUrl)).rejects.toEqual(err);
 
       verify(cacheServiceMock.get(key)).once();
       verify(httpRequestSenderMock.get(fullUrlWithKey)).once();

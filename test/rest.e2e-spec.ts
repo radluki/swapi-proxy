@@ -1,6 +1,6 @@
 import * as request from 'supertest';
 import Redis from 'ioredis';
-import { APP_URL, createRedisClient, maybeFlushRedis } from './common';
+import { APP_URL, createRedisClient, maybeFlushRedis, PORT } from './common';
 
 describe('REST proxy api (e2e)', () => {
   const req = request(APP_URL);
@@ -75,9 +75,14 @@ describe('REST proxy api (e2e)', () => {
     expect(body.results[0].name).toBe('Tatooine');
   });
 
+  function getKey(relativeUrl: string): string {
+    return `:${PORT}${relativeUrl}`;
+  }
+
   it('GET /api/planets?page=3 - clears cache', async () => {
     const relative_url = '/api/planets/?page=3';
-    await redis.del(relative_url);
+    const key = getKey(relative_url);
+    await redis.del(key);
 
     const response = await req.get(relative_url);
     expect(response.statusCode).toBe(200);
@@ -89,9 +94,10 @@ describe('REST proxy api (e2e)', () => {
   });
 
   it('GET /api/planets?page=4 - test caching', async () => {
-    const relative_url = '/api/planets/?page=3';
+    const relative_url = '/api/planets/?page=4';
+    const key = getKey(relative_url);
     const dummyObj = { dummy: 'my dummy data' };
-    await redis.set(relative_url, JSON.stringify(dummyObj));
+    await redis.set(key, JSON.stringify(dummyObj));
 
     const response = await req.get(relative_url);
     expect(response.statusCode).toBe(200);
