@@ -19,7 +19,7 @@ async function bootstrap() {
 }
 
 function setUpSwagger(app: any): void {
-  const swaggerDocument = YAML.load('./src/swagger-config.yaml');
+  const swaggerDocument = YAML.load('./swagger-config.yaml');
   app.use('/api/docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 }
 

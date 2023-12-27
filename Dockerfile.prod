@@ -1,0 +1,18 @@
+# Stage 1: Build the application
+FROM node:21 as builder
+WORKDIR /app
+COPY . /app
+RUN npm install
+RUN npm run build
+
+
+# Stage 2: Production image
+FROM node:21
+WORKDIR /app
+COPY package*.json ./
+COPY .env* ./
+COPY swagger-config.yaml ./
+RUN npm install --production
+COPY --from=builder /app/dist/ dist/
+EXPOSE 3000
+CMD ["node", "dist/main.js"]
