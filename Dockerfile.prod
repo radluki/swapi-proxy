@@ -2,7 +2,7 @@
 FROM node:21 as builder
 WORKDIR /app
 COPY . /app
-RUN npm install
+RUN npm ci
 RUN npm run build
 
 
@@ -12,7 +12,7 @@ WORKDIR /app
 COPY package*.json ./
 COPY .env* ./
 COPY swagger-config.yaml ./
-RUN npm install --production
+RUN NODE_ENV=production npm ci
 COPY --from=builder /app/dist/ dist/
 EXPOSE 3000
 CMD ["node", "dist/main.js"]
