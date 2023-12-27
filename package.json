@@ -19,10 +19,12 @@
     "test:e2e": "jest --config ./test/jest-e2e.json",
     "test:e2e:rest": "npm run test:e2e -- ./test/rest.e2e-spec.ts",
     "test:e2e:gql": "npm run test:e2e -- ./test/graphql.e2e-spec.ts",
-    "test:e2e:health": "npm run test:e2e -- ./test/healthcheck.e2e-spec.ts"
+    "test:e2e:health": "npm run test:e2e -- ./test/healthcheck.e2e-spec.ts",
+    "clear-cache": "ts-node scripts/clear-cache.ts"
   },
   "dependencies": {
     "@nestjs/apollo": "^12.0.11",
+    "@nestjs/axios": "^3.0.1",
     "@nestjs/common": "^10.0.0",
     "@nestjs/config": "^3.1.1",
     "@nestjs/core": "^10.0.0",

@@ -1,6 +1,6 @@
 import * as request from 'supertest';
 import Redis from 'ioredis';
-import { APP_URL, createRedisClient, maybeFlushRedis } from './common';
+import { APP_URL, createRedisClient } from './common';
 
 describe('GraphQl api (e2e)', () => {
   const req = request(APP_URL);
@@ -8,7 +8,6 @@ describe('GraphQl api (e2e)', () => {
 
   beforeAll(async () => {
     redis = createRedisClient();
-    maybeFlushRedis(redis);
   });
 
   afterAll(async () => {

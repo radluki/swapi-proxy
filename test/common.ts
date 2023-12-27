@@ -11,11 +11,3 @@ export function createRedisClient() {
     port: 6379,
   });
 }
-
-export function maybeFlushRedis(redis: Redis) {
-  if (process.env.FLUSHDB === '1') {
-    redis.flushdb().then(() => {
-      console.log('All keys in the current database have been deleted');
-    });
-  }
-}

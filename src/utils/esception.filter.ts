@@ -6,6 +6,7 @@ import {
   HttpStatus,
 } from '@nestjs/common';
 import { createLogger } from './logger-factory';
+import { AxiosError } from 'axios';
 
 @Catch()
 export class AnyExceptionFilter implements ExceptionFilter {
@@ -30,8 +31,8 @@ export class AnyExceptionFilter implements ExceptionFilter {
       this.logger.warn(`HttpException: ${exception.message}`);
       return exception.getStatus();
     }
-    if (exception?.response?.status) {
-      const status = exception.response.status;
+    if (exception instanceof AxiosError) {
+      const status = exception?.response.status;
       this.logger.warn(
         `AxiosException: message: "${exception.message}", status: ${status}`,
       );

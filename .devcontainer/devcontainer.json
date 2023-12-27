@@ -7,7 +7,14 @@
 
 	"containerEnv": {
         "DOCKER": "1"
-    }
+	},
+	"customizations": {
+		"vscode": {
+			"extensions": [
+				"shd101wyy.markdown-preview-enhanced"
+			]
+		}
+	}
 	// Features to add to the dev container. More info: https://containers.dev/features.
 	// "features": {},
 

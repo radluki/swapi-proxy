@@ -6,8 +6,10 @@ import { HttpRequestSender } from './http-request-sender';
 import { OpeningCrawlsService } from './opening-crawl.service';
 import { CachedApiController } from './cached-api.controller';
 import { ConfigService } from '@nestjs/config';
+import { HttpModule } from '@nestjs/axios';
 
 @Module({
+  imports: [HttpModule],
   providers: [
     {
       provide: 'RedisClient',
