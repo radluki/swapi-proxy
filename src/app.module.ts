@@ -14,6 +14,9 @@ import configuration, {
       isGlobal: true,
       load: [configuration],
       validationSchema: envVariablesValidationSchema,
+      envFilePath: process.env.NODE_ENV
+        ? `.env.${process.env.NODE_ENV}`
+        : '.env',
     }),
   ],
   providers: [],

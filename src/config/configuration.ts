@@ -16,8 +16,9 @@ export const envVariablesValidationSchema = Joi.object({
   REDIS_PORT: Joi.number().required(),
   LOG_LEVEL: Joi.string()
     .valid('fatal', 'error', 'warn', 'log', 'debug', 'verbose')
-    .required(),
-  DISABLE_LOGS: Joi.number().valid(0, 1),
-  SWAPI_URL: Joi.string().uri(),
-  SWAPI_PROXY_URL: Joi.string().uri(),
+    .default('debug'),
+  DISABLE_LOGS: Joi.number().valid(0, 1).default(0),
+  SWAPI_URL: Joi.string().uri().default('https://swapi.dev'),
+  SWAPI_PROXY_URL: Joi.string().uri().required(),
+  PORT: Joi.number().required(),
 });

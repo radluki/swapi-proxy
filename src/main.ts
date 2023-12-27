@@ -4,6 +4,7 @@ import { AnyExceptionFilter } from './utils/esception.filter';
 import * as swaggerUi from 'swagger-ui-express';
 import * as YAML from 'yamljs';
 import { getNestLogLevels } from './utils/nest-logger-config';
+import { ConfigService } from '@nestjs/config';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
@@ -13,7 +14,8 @@ async function bootstrap() {
 
   setUpSwagger(app);
 
-  await app.listen(3000);
+  const port = app.get(ConfigService).get('PORT');
+  await app.listen(port);
 }
 
 function setUpSwagger(app: any): void {
