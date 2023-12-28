@@ -7,7 +7,7 @@ const enum SwapiResourceType {
   Starships = 'starships',
 }
 
-export interface IGraphqlService {
+export interface ISwapiResourceProviderService {
   getPerson(id: number): Promise<any>;
   getPlanet(id: number): Promise<any>;
   getStarship(id: number): Promise<any>;
@@ -17,7 +17,7 @@ export interface IGraphqlService {
 }
 
 @Injectable()
-export class GraphqlService {
+export class SwapiResourceProviderService {
   constructor(private cachedApiService: CachedApiService) {}
 
   async getPerson(id: number): Promise<any> {

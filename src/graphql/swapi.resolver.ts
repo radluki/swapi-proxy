@@ -1,5 +1,5 @@
 import { Resolver, ResolveField, Query } from '@nestjs/graphql';
-import { IGraphqlService } from './graphql.service';
+import { ISwapiResourceProviderService } from './swapi-resource-provider.service';
 import { Swapi } from './types/swapi.type';
 import { NameArg, PageArg, IdArg } from './query-args';
 import { Inject } from '@nestjs/common';
@@ -7,7 +7,7 @@ import { Inject } from '@nestjs/common';
 @Resolver(() => Swapi)
 export class SwapiResolver {
   constructor(
-    @Inject('IGraphqlService') private readonly graphqlService: IGraphqlService,
+    @Inject('ISwapiResourceProviderService') private readonly swapiResourceProvider: ISwapiResourceProviderService,
   ) {}
 
   @Query(() => Swapi)
@@ -17,31 +17,31 @@ export class SwapiResolver {
 
   @ResolveField()
   async person(@IdArg() id: number) {
-    return await this.graphqlService.getPerson(id);
+    return await this.swapiResourceProvider.getPerson(id);
   }
 
   @ResolveField()
   async planet(@IdArg() id: number) {
-    return await this.graphqlService.getPlanet(id);
+    return await this.swapiResourceProvider.getPlanet(id);
   }
 
   @ResolveField()
   async starship(@IdArg() id: number) {
-    return await this.graphqlService.getStarship(id);
+    return await this.swapiResourceProvider.getStarship(id);
   }
 
   @ResolveField()
   async people(@NameArg() name: string, @PageArg() page: number) {
-    return await this.graphqlService.getPeople(name, page);
+    return await this.swapiResourceProvider.getPeople(name, page);
   }
 
   @ResolveField()
   async planets(@NameArg() name: string, @PageArg() page: number) {
-    return await this.graphqlService.getPlanets(name, page);
+    return await this.swapiResourceProvider.getPlanets(name, page);
   }
 
   @ResolveField()
   async starships(@NameArg() name: string, @PageArg() page: number) {
-    return await this.graphqlService.getStarships(name, page);
+    return await this.swapiResourceProvider.getStarships(name, page);
   }
 }
