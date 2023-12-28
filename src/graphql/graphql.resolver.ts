@@ -39,47 +39,71 @@ export class GraphqlResolver {
       .filter((selection): selection is FieldNode => selection.kind === 'Field')
       .map((field) => field.name.value);
 
-    const person = requestedFields.includes('person')
-      ? await this.graphqlService.getSingleResource(
-          ResourceType.People,
-          personId,
-        )
-      : [];
-    const planet = requestedFields.includes('planet')
-      ? await this.graphqlService.getSingleResource(
-          ResourceType.Planets,
-          planetId,
-        )
-      : [];
-    const starship = requestedFields.includes('starship')
-      ? await this.graphqlService.getSingleResource(
-          ResourceType.Starships,
-          starshipId,
-        )
-      : [];
-    const people = requestedFields.includes('people')
-      ? await this.graphqlService.getResources(
-          ResourceType.People,
-          peopleName,
-          peoplePage,
-        )
-      : [];
-    const planets = requestedFields.includes('planets')
-      ? await this.graphqlService.getResources(
-          ResourceType.Planets,
-          planetsName,
-          planetsPage,
-        )
-      : [];
+    const person = await this.getResource(
+      ResourceType.Person,
+      requestedFields,
+      { id: personId },
+    );
+    const planet = await this.getResource(
+      ResourceType.Planet,
+      requestedFields,
+      { id: planetId },
+    );
+    const starship = await this.getResource(
+      ResourceType.Starship,
+      requestedFields,
+      { id: starshipId },
+    );
 
-    const starships = requestedFields.includes('starships')
-      ? await this.graphqlService.getResources(
-          ResourceType.Starships,
-          starshipName,
-          starshipPage,
-        )
-      : [];
+    const people = await this.getResource(
+      ResourceType.People,
+      requestedFields,
+      {
+        name: peopleName,
+        page: peoplePage,
+      },
+    );
+    const planets = await this.getResource(
+      ResourceType.Planets,
+      requestedFields,
+      {
+        name: planetsName,
+        page: planetsPage,
+      },
+    );
+    const starships = await this.getResource(
+      ResourceType.Starships,
+      requestedFields,
+      {
+        name: starshipName,
+        page: starshipPage,
+      },
+    );
 
     return { person, planet, starship, people, planets, starships };
+  }
+
+  private async getResource(
+    resourceType: ResourceType,
+    requestedFields: string[],
+    params: { id?: number; name?: string; page?: number },
+  ) {
+    if (!requestedFields.includes(resourceType)) return [];
+
+    if (
+      this.graphqlService.isSingularResource(resourceType) &&
+      params.id !== undefined
+    ) {
+      return await this.graphqlService.getSingleResource(
+        resourceType,
+        params.id,
+      );
+    } else {
+      return await this.graphqlService.getResources(
+        resourceType,
+        params.name,
+        params.page,
+      );
+    }
   }
 }
