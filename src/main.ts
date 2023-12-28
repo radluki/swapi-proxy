@@ -3,7 +3,7 @@ import { AppModule } from './app.module';
 import { AnyExceptionFilter } from './utils/esception.filter';
 import * as swaggerUi from 'swagger-ui-express';
 import * as YAML from 'yamljs';
-import { getNestLogLevels } from './utils/nest-logger-config';
+import { getNestLogLevels } from './utils/nest-log-levels';
 import { ConfigService } from '@nestjs/config';
 
 async function bootstrap() {
