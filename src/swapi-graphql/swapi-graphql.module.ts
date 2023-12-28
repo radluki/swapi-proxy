@@ -5,6 +5,7 @@ import * as path from 'path';
 import { SwapiResourceProviderService } from './swapi-resource-provider.service';
 import { CachedApiModule } from '../cached-api/cached-api.module';
 import { SwapiResolver } from './swapi.resolver';
+import { SwapiResourcesResolver } from './swapi-resources.resolver';
 
 @Module({
   imports: [
@@ -16,6 +17,7 @@ import { SwapiResolver } from './swapi.resolver';
     CachedApiModule,
   ],
   providers: [
+    SwapiResourcesResolver,
     SwapiResolver,
     {
       provide: 'ISwapiResourceProviderService',
