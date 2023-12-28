@@ -1,18 +1,15 @@
 import { Resolver, Query, Args, Int, Info } from '@nestjs/graphql';
 import { FieldNode, GraphQLResolveInfo } from 'graphql';
 import { GraphqlService, ResourceType } from './graphql.service';
-import { People } from './types/person.type';
-import { Planets } from './types/planets.type';
 import { createLogger } from '../utils/logger-factory';
-import { Starships } from './types/starships.type';
 import { Swapi } from './types/swapi.type';
 
-function NameArg() {
-  return Args('name', { type: () => String, nullable: true });
+function NameArg(name = 'name') {
+  return Args(name, { type: () => String, nullable: true });
 }
 
-function PageArg() {
-  return Args('page', { type: () => Int, nullable: true });
+function PageArg(name = 'page') {
+  return Args(name, { type: () => Int, nullable: true });
 }
 
 function IdArg(name = 'id') {
@@ -25,34 +22,18 @@ export class GraphqlResolver {
 
   constructor(private readonly graphqlService: GraphqlService) {}
 
-  private logQuery(method: string, args: any) {
-    this.logger.log(`${method} query with args: ${JSON.stringify(args)}`);
-  }
-
-  @Query(() => People)
-  async people(@NameArg() name?: string, @PageArg() page?: number) {
-    this.logQuery('people', { name, page });
-    return this.graphqlService.getResources(ResourceType.People, name, page);
-  }
-
-  @Query(() => Planets)
-  async planets(@NameArg() name?: string, @PageArg() page?: number) {
-    this.logQuery('planets', { name, page });
-    return this.graphqlService.getResources(ResourceType.Planets, name, page);
-  }
-
-  @Query(() => Starships)
-  async starships(@NameArg() name?: string, @PageArg() page?: number) {
-    this.logQuery('starships', { name, page });
-    return this.graphqlService.getResources(ResourceType.Starships, name, page);
-  }
-
   @Query(() => Swapi)
   async swapi(
     @IdArg('personId') personId: number,
     @IdArg('planetId') planetId: number,
     @IdArg('starshipId') starshipId: number,
     @Info() info: GraphQLResolveInfo,
+    @NameArg('peopleName') peopleName?: string,
+    @PageArg('peoplePage') peoplePage?: number,
+    @NameArg('planetsName') planetsName?: string,
+    @PageArg('planetsPage') planetsPage?: number,
+    @NameArg('starshipName') starshipName?: string,
+    @PageArg('starshipPage') starshipPage?: number,
   ): Promise<Swapi> {
     const requestedFields = info.fieldNodes[0].selectionSet.selections
       .filter((selection): selection is FieldNode => selection.kind === 'Field')
@@ -76,7 +57,29 @@ export class GraphqlResolver {
           starshipId,
         )
       : [];
+    const people = requestedFields.includes('people')
+      ? await this.graphqlService.getResources(
+          ResourceType.People,
+          peopleName,
+          peoplePage,
+        )
+      : [];
+    const planets = requestedFields.includes('planets')
+      ? await this.graphqlService.getResources(
+          ResourceType.Planets,
+          planetsName,
+          planetsPage,
+        )
+      : [];
 
-    return { person, planet, starship };
+    const starships = requestedFields.includes('starships')
+      ? await this.graphqlService.getResources(
+          ResourceType.Starships,
+          starshipName,
+          starshipPage,
+        )
+      : [];
+
+    return { person, planet, starship, people, planets, starships };
   }
 }

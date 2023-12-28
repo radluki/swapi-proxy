@@ -1,16 +1,29 @@
 import { Field, ObjectType } from '@nestjs/graphql';
-import { Person } from './person.type';
-import { Planet } from './planets.type';
-import { Starship } from './starships.type';
+import { Person, People } from './person.type';
+import { Planet, Planets } from './planets.type';
+import { Starship, Starships } from './starships.type';
+
+function NullableField() {
+  return Field({ nullable: true });
+}
 
 @ObjectType()
 export class Swapi {
-  @Field({ nullable: true })
+  @NullableField()
   person: Person;
 
-  @Field({ nullable: true })
+  @NullableField()
   planet: Planet;
 
-  @Field({ nullable: true })
+  @NullableField()
   starship: Starship;
+
+  @NullableField()
+  people: People;
+
+  @NullableField()
+  planets: Planets;
+
+  @NullableField()
+  starships: Starships;
 }

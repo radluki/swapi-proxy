@@ -9,8 +9,6 @@ getJsonFromApi() {
         $URL
 }
 
-getJsonFromApi '{ "query": "{ people(page: 3) { count next results { name starships } } }" }' | jq
+getJsonFromApi '{ "query": "{ swapi(peoplePage: 3) { people { count next results { name starships } } } }" }' | jq
 
-getJsonFromApi '{ "query": "{ person(id: 21) { name starships } }" }' | jq
-
-getJsonFromApi '{"query":"{ resource(type: \"people\", id: 3) { ... on Person { name films } } }"}' | jq
+getJsonFromApi '{ "query": "{ swapi(personId: 21) { person { name films } } }" }' | jq
