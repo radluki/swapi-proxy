@@ -8,7 +8,7 @@ export class SwapiResolver {
   constructor(private readonly graphqlService: GraphqlService) {}
 
   @Query(() => Swapi)
-  async swapi2() {
+  async swapi() {
     return {};
   }
 

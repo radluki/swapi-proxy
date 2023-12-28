@@ -36,7 +36,7 @@ describe('GraphQl api (e2e)', () => {
 
   it('people second page', async () => {
     const QUERY =
-      '{ swapi(peoplePage: 2) { people { count next results { name } } } }';
+      '{ swapi { people(page: 2) { count next results { name } } } }';
     const resp = await req.post('/graphql').send({
       query: QUERY,
     });
@@ -57,7 +57,7 @@ describe('GraphQl api (e2e)', () => {
 
   it('people query name', async () => {
     const QUERY =
-      '{ swapi(peopleName: "Skywalker") { people { count next results { name } } } }';
+      '{ swapi { people(name: "Skywalker") { count next results { name } } } }';
     const resp = await req.post('/graphql').send({
       query: QUERY,
     });
@@ -79,7 +79,7 @@ describe('GraphQl api (e2e)', () => {
   });
 
   it('person id', async () => {
-    const QUERY = '{ swapi(personId: 2) { person { name } } }';
+    const QUERY = '{ swapi { person(id: 2) { name } } }';
     const resp = await req.post('/graphql').send({
       query: QUERY,
     });
@@ -93,7 +93,7 @@ describe('GraphQl api (e2e)', () => {
   });
 
   it('person check subarrays', async () => {
-    const QUERY = '{ swapi(personId: 2) { person { name films } } }';
+    const QUERY = '{ swapi { person(id: 2) { name films } } }';
     const resp = await req.post('/graphql').send({
       query: QUERY,
     });
