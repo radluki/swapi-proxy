@@ -5,6 +5,7 @@ import * as path from 'path';
 import { GraphqlResolver } from './graphql.resolver';
 import { GraphqlService } from './graphql.service';
 import { CachedApiModule } from '../cached-api/cached-api.module';
+import { SwapiResolver } from './swapi.resolver';
 
 @Module({
   imports: [
@@ -15,6 +16,6 @@ import { CachedApiModule } from '../cached-api/cached-api.module';
     }),
     CachedApiModule,
   ],
-  providers: [GraphqlResolver, GraphqlService],
+  providers: [SwapiResolver, GraphqlResolver, GraphqlService],
 })
 export class GraphqlModule {}

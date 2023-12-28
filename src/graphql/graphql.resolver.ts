@@ -1,20 +1,9 @@
-import { Resolver, Query, Args, Int, Info } from '@nestjs/graphql';
+import { Resolver, Query, Info } from '@nestjs/graphql';
 import { FieldNode, GraphQLResolveInfo } from 'graphql';
 import { GraphqlService, ResourceType } from './graphql.service';
 import { createLogger } from '../utils/logger-factory';
 import { Swapi } from './types/swapi.type';
-
-function NameArg(name = 'name') {
-  return Args(name, { type: () => String, nullable: true });
-}
-
-function PageArg(name = 'page') {
-  return Args(name, { type: () => Int, nullable: true });
-}
-
-function IdArg(name = 'id') {
-  return Args(name, { type: () => Int, defaultValue: 1 });
-}
+import { IdArg, NameArg, PageArg } from './query-args';
 
 @Resolver()
 export class GraphqlResolver {
