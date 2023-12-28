@@ -23,17 +23,6 @@ export class CachedApiService {
     this.logger.debug(`swapiUrl: ${this.swapiUrl}`);
   }
 
-  getApiRoot(): any {
-    return {
-      people: `http://localhost:${this.port}/api/people/`,
-      planets: `http://localhost:${this.port}/api/planets/`,
-      films: `http://localhost:${this.port}/api/films/`,
-      species: `http://localhost:${this.port}/api/species/`,
-      vehicles: `http://localhost:${this.port}/api/vehicles/`,
-      starships: `http://localhost:${this.port}/api/starships/`,
-    };
-  }
-
   async get(relativeUrl: string): Promise<string> {
     const cachedValue = await this.getFromCache(this.getKey(relativeUrl));
     return cachedValue || this.getFromSwapi(relativeUrl);

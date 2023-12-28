@@ -21,7 +21,7 @@ export class CachedApiController {
 
   @Get('/')
   async getRoot() {
-    return await this.cachedApiService.getApiRoot();
+    return await this.cachedApiService.get('/api/');
   }
 
   @Get('films/opening-crawls/word-counts')
