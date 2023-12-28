@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { CachedApiProxyService } from '../cached-api/cached-api-proxy.service';
+import { CachedApiService } from '../cached-api/cached-api.service';
 
 const enum SwapiResourceType {
   People = 'people',
@@ -18,7 +18,7 @@ export interface IGraphqlService {
 
 @Injectable()
 export class GraphqlService {
-  constructor(private cachedApiService: CachedApiProxyService) {}
+  constructor(private cachedApiService: CachedApiService) {}
 
   async getPerson(id: number): Promise<any> {
     return await this.getSingleResource(SwapiResourceType.People, id);

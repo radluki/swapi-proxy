@@ -1,11 +1,11 @@
 import { instance, mock, when, verify, anything, reset } from 'ts-mockito';
-import { CachedApiProxyService } from './cached-api-proxy.service';
+import { CachedApiService } from './cached-api.service';
 import { CacheService } from './redis.service';
 import { HttpRequestSender } from './http-request-sender';
 import { ConfigService } from '@nestjs/config';
 
-describe('CachedApiProxyService', () => {
-  let sut: CachedApiProxyService;
+describe('CachedApiService', () => {
+  let sut: CachedApiService;
   let cacheServiceMock: CacheService;
   let httpRequestSenderMock: HttpRequestSender;
   let configServiceMock: ConfigService;
@@ -37,7 +37,7 @@ describe('CachedApiProxyService', () => {
   beforeEach(async () => {
     reset(httpRequestSenderMock);
     reset(cacheServiceMock);
-    sut = new CachedApiProxyService(
+    sut = new CachedApiService(
       instance(httpRequestSenderMock),
       instance(cacheServiceMock),
       instance(configServiceMock),

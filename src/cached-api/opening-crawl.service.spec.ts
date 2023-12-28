@@ -1,18 +1,18 @@
 import { OpeningCrawlsService } from './opening-crawl.service';
-import { CachedApiProxyService } from './cached-api-proxy.service';
+import { CachedApiService } from './cached-api.service';
 import { mock, instance, when, reset } from 'ts-mockito';
 
 describe('OpeningCrawlsService', () => {
   let sut: OpeningCrawlsService;
-  let cachedApiProxyServiceMock: CachedApiProxyService;
+  let cachedApiServiceMock: CachedApiService;
 
   beforeAll(async () => {
-    cachedApiProxyServiceMock = mock<CachedApiProxyService>();
-    sut = new OpeningCrawlsService(instance(cachedApiProxyServiceMock));
+    cachedApiServiceMock = mock<CachedApiService>();
+    sut = new OpeningCrawlsService(instance(cachedApiServiceMock));
   });
 
   beforeEach(async () => {
-    reset(cachedApiProxyServiceMock);
+    reset(cachedApiServiceMock);
   });
 
   it('countWords', async () => {
@@ -23,7 +23,7 @@ describe('OpeningCrawlsService', () => {
       ],
     };
     const serializedGetResp = JSON.stringify(getResp);
-    when(cachedApiProxyServiceMock.get('/api/films/')).thenResolve(
+    when(cachedApiServiceMock.get('/api/films/')).thenResolve(
       serializedGetResp,
     );
 
@@ -44,7 +44,7 @@ describe('OpeningCrawlsService', () => {
       results: [{ name: 'Luke Skywalker' }, { name: 'Leia Morgana' }],
     };
     const serializedPage1 = JSON.stringify(page1);
-    when(cachedApiProxyServiceMock.get('/api/people/')).thenResolve(
+    when(cachedApiServiceMock.get('/api/people/')).thenResolve(
       serializedPage1,
     );
 
@@ -53,7 +53,7 @@ describe('OpeningCrawlsService', () => {
       results: [{ name: 'Dooku' }, { name: 'Han Solo' }],
     };
     const serializedPage2 = JSON.stringify(page2);
-    when(cachedApiProxyServiceMock.get('/api/people/?page=2')).thenResolve(
+    when(cachedApiServiceMock.get('/api/people/?page=2')).thenResolve(
       serializedPage2,
     );
 
@@ -67,7 +67,7 @@ describe('OpeningCrawlsService', () => {
       ],
     };
     const serializedFilmsResp = JSON.stringify(filmsResp);
-    when(cachedApiProxyServiceMock.get('/api/films/')).thenResolve(
+    when(cachedApiServiceMock.get('/api/films/')).thenResolve(
       serializedFilmsResp,
     );
 

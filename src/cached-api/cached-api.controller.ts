@@ -1,5 +1,5 @@
 import { Controller, Get, Inject, Req } from '@nestjs/common';
-import { CachedApiProxyService } from './cached-api-proxy.service';
+import { CachedApiService } from './cached-api.service';
 import { Request } from 'express';
 import { IOpeningCrawlsService } from './opening-crawl.service';
 import { createLogger } from '../utils/logger-factory';
@@ -9,7 +9,7 @@ export class CachedApiController {
   private readonly logger = createLogger(CachedApiController.name);
 
   constructor(
-    private readonly cachedApiProxyService: CachedApiProxyService,
+    private readonly cachedApiService: CachedApiService,
     @Inject('IOpeningCrawlsService')
     private readonly openingCrawlsService: IOpeningCrawlsService,
   ) {}
@@ -21,14 +21,7 @@ export class CachedApiController {
 
   @Get('/')
   async getRoot() {
-    return {
-      people: 'http://localhost:3000/api/people/',
-      planets: 'http://localhost:3000/api/planets/',
-      films: 'http://localhost:3000/api/films/',
-      species: 'http://localhost:3000/api/species/',
-      vehicles: 'http://localhost:3000/api/vehicles/',
-      starships: 'http://localhost:3000/api/starships/',
-    };
+    return await this.cachedApiService.getApiRoot();
   }
 
   @Get('films/opening-crawls/word-counts')
@@ -44,6 +37,6 @@ export class CachedApiController {
   @Get(':resource(films|species|vehicles|starships|people|planets)*')
   async proxy(@Req() request: Request) {
     this.logger.log(`proxying ${request.url}`);
-    return await this.cachedApiProxyService.get(request.url);
+    return await this.cachedApiService.get(request.url);
   }
 }

@@ -1,8 +1,8 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { CachedApiController } from './cached-api.controller';
-import { CachedApiProxyService } from './cached-api-proxy.service';
+import { CachedApiService } from './cached-api.service';
 
-class CachedApiProxyServiceMock {
+class CachedApiServiceMock {
   get = jest.fn();
 }
 
@@ -13,7 +13,7 @@ class OpeningCrawlServiceMock {
 describe('AppController', () => {
   let app: TestingModule;
 
-  const cachedApiProxyServiceMock = new CachedApiProxyServiceMock();
+  const cachedApiServiceMock = new CachedApiServiceMock();
   const openingCrawlsServiceMock = new OpeningCrawlServiceMock();
 
   beforeAll(async () => {
@@ -22,8 +22,8 @@ describe('AppController', () => {
       controllers: [CachedApiController],
       providers: [
         {
-          provide: CachedApiProxyService,
-          useValue: cachedApiProxyServiceMock,
+          provide: CachedApiService,
+          useValue: cachedApiServiceMock,
         },
         {
           provide: 'IOpeningCrawlsService',

@@ -5,8 +5,8 @@ import { HttpRequestSender } from './http-request-sender';
 import { ConfigService } from '@nestjs/config';
 
 @Injectable()
-export class CachedApiProxyService {
-  private readonly logger = createLogger(CachedApiProxyService.name);
+export class CachedApiService {
+  private readonly logger = createLogger(CachedApiService.name);
   private readonly swapiProxyDomain: string;
   private readonly swapiUrl: string;
   private readonly port: number;
@@ -21,6 +21,17 @@ export class CachedApiProxyService {
     this.port = configService.get<number>('PORT');
     this.logger.debug(`swapiProxyDomain: ${this.swapiProxyDomain}`);
     this.logger.debug(`swapiUrl: ${this.swapiUrl}`);
+  }
+
+  getApiRoot(): any {
+    return {
+      people: `http://localhost:${this.port}/api/people/`,
+      planets: `http://localhost:${this.port}/api/planets/`,
+      films: `http://localhost:${this.port}/api/films/`,
+      species: `http://localhost:${this.port}/api/species/`,
+      vehicles: `http://localhost:${this.port}/api/vehicles/`,
+      starships: `http://localhost:${this.port}/api/starships/`,
+    };
   }
 
   async get(relativeUrl: string): Promise<string> {

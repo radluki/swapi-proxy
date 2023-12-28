@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { createLogger } from '../utils/logger-factory';
-import { CachedApiProxyService } from './cached-api-proxy.service';
+import { CachedApiService } from './cached-api.service';
 
 export interface IOpeningCrawlsService {
   countWords(): Promise<string>;
@@ -13,7 +13,7 @@ export class OpeningCrawlsService implements IOpeningCrawlsService {
   private readonly filmsUrl: string = '/api/films/';
   private readonly peopleUrl: string = '/api/people/';
 
-  constructor(private readonly cachedApiProxyService: CachedApiProxyService) {}
+  constructor(private readonly cachedApiService: CachedApiService) {}
 
   async countWords(): Promise<string> {
     const mergedOpeningCrawls = await this.getCleanedMergedOpeningCrawls();
@@ -45,7 +45,7 @@ export class OpeningCrawlsService implements IOpeningCrawlsService {
     let results = [];
     while (nextUrl) {
       const response = JSON.parse(
-        await this.cachedApiProxyService.get(nextUrl),
+        await this.cachedApiService.get(nextUrl),
       );
 
       results = results.concat(response.results);
