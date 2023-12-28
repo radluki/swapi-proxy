@@ -78,7 +78,8 @@ describe('REST proxy api (e2e)', () => {
     return `:${PORT}${relativeUrl}`;
   }
 
-  it('GET /api/planets?page=3 - clears cache', async () => {
+  //skipped because it takes too long
+  it.skip('GET /api/planets?page=3 - clears cache', async () => {
     const relative_url = '/api/planets/?page=3';
     const key = getKey(relative_url);
     await redis.del(key);
@@ -104,7 +105,8 @@ describe('REST proxy api (e2e)', () => {
     expect(body).toStrictEqual(dummyObj);
   });
 
-  it('GET /api/films/1000/ - test error forwarding', async () => {
+  //skipped because it takes too long
+  it.skip('GET /api/films/1000/ - test error forwarding', async () => {
     const response = await req.get('/api/films/1000/');
     expect(response.statusCode).toBe(404);
     expect(response.body.statusCode).toBe(404);

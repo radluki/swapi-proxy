@@ -36,34 +36,16 @@ export class GraphqlResolver {
     return this.graphqlService.getResources(ResourceType.People, name, page);
   }
 
-  @Query(() => Person)
-  async person(@IdArg() id: number) {
-    this.logQuery('person', { id });
-    return this.graphqlService.getSingleResource(ResourceType.People, id);
-  }
-
   @Query(() => Planets)
   async planets(@NameArg() name?: string, @PageArg() page?: number) {
     this.logQuery('planets', { name, page });
     return this.graphqlService.getResources(ResourceType.Planets, name, page);
   }
 
-  @Query(() => Planet)
-  async planet(@IdArg() id: number) {
-    this.logQuery('planet', { id });
-    return this.graphqlService.getSingleResource(ResourceType.Planets, id);
-  }
-
   @Query(() => Starships)
   async starships(@NameArg() name?: string, @PageArg() page?: number) {
     this.logQuery('starships', { name, page });
     return this.graphqlService.getResources(ResourceType.Starships, name, page);
-  }
-
-  @Query(() => Starship)
-  async starship(@IdArg() id: number) {
-    this.logQuery('starship', { id });
-    return this.graphqlService.getSingleResource(ResourceType.Starships, id);
   }
 
   @Query(() => ResourceUnion)

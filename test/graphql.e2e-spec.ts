@@ -75,26 +75,28 @@ describe('GraphQl api (e2e)', () => {
   });
 
   it('person id', async () => {
-    const QUERY = '{ person(id: 2) { name } }';
+    const QUERY = '{ swapi(personId: 2) { person { name } } }';
     const resp = await req.post('/graphql').send({
       query: QUERY,
     });
 
     expect(resp.statusCode).toBe(200);
-    const person = resp.body.data.person;
+    expect(resp.body.data.swapi).toBeDefined();
+    const person = resp.body.data.swapi.person;
     expect(person).toBeDefined();
     expect(person).toStrictEqual({ name: 'C-3PO' });
     expect(person.name).toBe('C-3PO');
   });
 
   it('person check subarrays', async () => {
-    const QUERY = '{ person(id: 2) { name films } }';
+    const QUERY = '{ swapi(personId: 2) { person { name films } } }';
     const resp = await req.post('/graphql').send({
       query: QUERY,
     });
 
     expect(resp.statusCode).toBe(200);
-    const person = resp.body.data.person;
+    expect(resp.body.data.swapi).toBeDefined();
+    const person = resp.body.data.swapi.person;
     expect(person).toBeDefined();
     expect(person.name).toBe('C-3PO');
     expect(person.films).toBeDefined();
