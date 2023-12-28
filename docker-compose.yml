@@ -4,14 +4,11 @@ services:
   app:
     build:
       context: .
-      dockerfile: Dockerfile
-    volumes:
-      - ./src:/app/src
+      dockerfile: Dockerfile.prod
     ports:
       - "3000:3000"
     environment:
       NODE_ENV: docker
-    command: ["npm", "run", "start:dev"]
 
   redis:
     image: "redis:alpine"

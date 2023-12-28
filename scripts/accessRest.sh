@@ -1,6 +1,9 @@
 #!/bin/bash
-
-URL="http://app:3000/api"
+if [ "$DOCKER" == "1" ]; then
+    URL="http://app:3000/api"
+else
+    URL="http://localhost:3000/api"
+fi
 
 curl -X GET -H "Content-Type: application/json" \
     $URL/people/33/ | jq &

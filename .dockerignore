@@ -3,7 +3,8 @@ dist
 coverage
 .devcontainer
 test
-docker-compose.yml
+scripts
+docker-compose*.yml
 .git
 .gitignore
 Dockerfile
