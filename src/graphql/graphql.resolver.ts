@@ -1,10 +1,12 @@
-import { Resolver, Query, Args, Int } from '@nestjs/graphql';
+import { Resolver, Query, Args, Int, Info } from '@nestjs/graphql';
+import { FieldNode, GraphQLResolveInfo } from 'graphql';
 import { GraphqlService, ResourceType } from './graphql.service';
 import { People, Person } from './types/person.type';
 import { Planet, Planets } from './types/planets.type';
 import { createLogger } from '../utils/logger-factory';
 import { Starship, Starships } from './types/starships.type';
 import { ResourceUnion } from './types/resource.type';
+import { Swapi } from './types/swapi.type';
 
 function NameArg() {
   return Args('name', { type: () => String, nullable: true });
@@ -14,8 +16,8 @@ function PageArg() {
   return Args('page', { type: () => Int, nullable: true });
 }
 
-function IdArg() {
-  return Args('id', { type: () => Int });
+function IdArg(name = 'id') {
+  return Args(name, { type: () => Int, defaultValue: 1 });
 }
 
 @Resolver()
@@ -72,5 +74,38 @@ export class GraphqlResolver {
   ) {
     this.logQuery(type, { id });
     return this.graphqlService.getSingleResource(type, id);
+  }
+
+  @Query(() => Swapi)
+  async swapi(
+    @IdArg('personId') personId: number,
+    @IdArg('planetId') planetId: number,
+    @IdArg('starshipId') starshipId: number,
+    @Info() info: GraphQLResolveInfo,
+  ): Promise<Swapi> {
+    const requestedFields = info.fieldNodes[0].selectionSet.selections
+      .filter((selection): selection is FieldNode => selection.kind === 'Field')
+      .map((field) => field.name.value);
+
+    const person = requestedFields.includes('person')
+      ? await this.graphqlService.getSingleResource(
+          ResourceType.People,
+          personId,
+        )
+      : [];
+    const planet = requestedFields.includes('planet')
+      ? await this.graphqlService.getSingleResource(
+          ResourceType.Planets,
+          planetId,
+        )
+      : [];
+    const starship = requestedFields.includes('starship')
+      ? await this.graphqlService.getSingleResource(
+          ResourceType.Starships,
+          starshipId,
+        )
+      : [];
+
+    return { person, planet, starship };
   }
 }
