@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
 import { createLogger } from '../utils/logger-factory';
-import { getCounterObj } from '../utils/utils';
 import { CachedApiProxyService } from './cached-api-proxy.service';
 
 export interface IOpeningCrawlsService {
@@ -87,4 +86,16 @@ export class OpeningCrawlsService implements IOpeningCrawlsService {
     }
     return countObj;
   }
+}
+
+function getCounterObj(array: string[]): { [key: string]: number } {
+  const countObj: { [key: string]: number } = {};
+  for (const element of array) {
+    if (countObj.hasOwnProperty(element)) {
+      countObj[element]++;
+    } else {
+      countObj[element] = 1;
+    }
+  }
+  return countObj;
 }
