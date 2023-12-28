@@ -1,6 +1,6 @@
 import * as Joi from 'joi';
 
-export default () => ({
+export const loadConfig = () => ({
   redis: {
     host: process.env.REDIS_HOST,
     port: parseInt(process.env.REDIS_PORT, 10),
@@ -11,7 +11,7 @@ export default () => ({
   swapiProxyUrl: process.env.SWAPI_PROXY_URL,
 });
 
-export const envVariablesValidationSchema = Joi.object({
+export const validationSchema = Joi.object({
   REDIS_HOST: Joi.string().required(),
   REDIS_PORT: Joi.number().required(),
   LOG_LEVEL: Joi.string()
