@@ -15,6 +15,12 @@ import { SwapiResolver } from './swapi.resolver';
     }),
     CachedApiModule,
   ],
-  providers: [SwapiResolver, GraphqlService],
+  providers: [
+    SwapiResolver,
+    {
+      provide: 'IGraphqlService',
+      useClass: GraphqlService,
+    },
+  ],
 })
 export class GraphqlModule {}

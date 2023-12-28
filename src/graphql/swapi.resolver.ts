@@ -1,11 +1,14 @@
 import { Resolver, ResolveField, Query } from '@nestjs/graphql';
-import { GraphqlService, ResourceType } from './graphql.service';
+import { IGraphqlService } from './graphql.service';
 import { Swapi } from './types/swapi.type';
 import { NameArg, PageArg, IdArg } from './query-args';
+import { Inject } from '@nestjs/common';
 
 @Resolver(() => Swapi)
 export class SwapiResolver {
-  constructor(private readonly graphqlService: GraphqlService) {}
+  constructor(
+    @Inject('IGraphqlService') private readonly graphqlService: IGraphqlService,
+  ) {}
 
   @Query(() => Swapi)
   async swapi() {
@@ -14,46 +17,31 @@ export class SwapiResolver {
 
   @ResolveField()
   async person(@IdArg() id: number) {
-    return await this.graphqlService.getSingleResource(ResourceType.Person, id);
+    return await this.graphqlService.getPerson(id);
   }
 
   @ResolveField()
   async planet(@IdArg() id: number) {
-    return await this.graphqlService.getSingleResource(ResourceType.Planet, id);
+    return await this.graphqlService.getPlanet(id);
   }
 
   @ResolveField()
   async starship(@IdArg() id: number) {
-    return await this.graphqlService.getSingleResource(
-      ResourceType.Starship,
-      id,
-    );
+    return await this.graphqlService.getStarship(id);
   }
 
   @ResolveField()
   async people(@NameArg() name: string, @PageArg() page: number) {
-    return await this.graphqlService.getResources(
-      ResourceType.People,
-      name,
-      page,
-    );
+    return await this.graphqlService.getPeople(name, page);
   }
 
   @ResolveField()
   async planets(@NameArg() name: string, @PageArg() page: number) {
-    return await this.graphqlService.getResources(
-      ResourceType.Planets,
-      name,
-      page,
-    );
+    return await this.graphqlService.getPlanets(name, page);
   }
 
   @ResolveField()
   async starships(@NameArg() name: string, @PageArg() page: number) {
-    return await this.graphqlService.getResources(
-      ResourceType.Starships,
-      name,
-      page,
-    );
+    return await this.graphqlService.getStarships(name, page);
   }
 }
