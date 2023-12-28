@@ -9,11 +9,6 @@ export class CachedApiController {
 
   constructor(private readonly cachedApiService: CachedApiService) {}
 
-  @Get('healthcheck')
-  async healthcheck(): Promise<string> {
-    return 'swapi-proxy is up and running';
-  }
-
   @Get('/')
   async getRoot() {
     return await this.cachedApiService.get('/api/');
