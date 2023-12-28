@@ -1,11 +1,10 @@
 import { Resolver, Query, Args, Int, Info } from '@nestjs/graphql';
 import { FieldNode, GraphQLResolveInfo } from 'graphql';
 import { GraphqlService, ResourceType } from './graphql.service';
-import { People, Person } from './types/person.type';
-import { Planet, Planets } from './types/planets.type';
+import { People } from './types/person.type';
+import { Planets } from './types/planets.type';
 import { createLogger } from '../utils/logger-factory';
-import { Starship, Starships } from './types/starships.type';
-import { ResourceUnion } from './types/resource.type';
+import { Starships } from './types/starships.type';
 import { Swapi } from './types/swapi.type';
 
 function NameArg() {
@@ -46,16 +45,6 @@ export class GraphqlResolver {
   async starships(@NameArg() name?: string, @PageArg() page?: number) {
     this.logQuery('starships', { name, page });
     return this.graphqlService.getResources(ResourceType.Starships, name, page);
-  }
-
-  @Query(() => ResourceUnion)
-  async resource(
-    @Args('type', { type: () => String })
-    type: ResourceType,
-    @IdArg() id: number,
-  ) {
-    this.logQuery(type, { id });
-    return this.graphqlService.getSingleResource(type, id);
   }
 
   @Query(() => Swapi)
