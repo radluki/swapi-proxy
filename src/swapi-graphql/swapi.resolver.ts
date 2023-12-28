@@ -7,7 +7,8 @@ import { Inject } from '@nestjs/common';
 @Resolver(() => Swapi)
 export class SwapiResolver {
   constructor(
-    @Inject('ISwapiResourceProviderService') private readonly swapiResourceProvider: ISwapiResourceProviderService,
+    @Inject('ISwapiResourceProviderService')
+    private readonly swapiResourceProvider: ISwapiResourceProviderService,
   ) {}
 
   @Query(() => Swapi)

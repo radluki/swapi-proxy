@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { createLogger } from '../utils/logger-factory';
-import { CachedApiService } from './cached-api.service';
+import { CachedApiService } from '../cached-api/cached-api.service';
 
 export interface IOpeningCrawlsService {
   countWords(): Promise<string>;
@@ -44,9 +44,7 @@ export class OpeningCrawlsService implements IOpeningCrawlsService {
     let nextUrl = url;
     let results = [];
     while (nextUrl) {
-      const response = JSON.parse(
-        await this.cachedApiService.get(nextUrl),
-      );
+      const response = JSON.parse(await this.cachedApiService.get(nextUrl));
 
       results = results.concat(response.results);
 

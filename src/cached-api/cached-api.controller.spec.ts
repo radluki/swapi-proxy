@@ -6,15 +6,10 @@ class CachedApiServiceMock {
   get = jest.fn();
 }
 
-class OpeningCrawlServiceMock {
-  countWords = jest.fn();
-}
-
-describe('AppController', () => {
+describe('CachedApiController', () => {
   let app: TestingModule;
 
   const cachedApiServiceMock = new CachedApiServiceMock();
-  const openingCrawlsServiceMock = new OpeningCrawlServiceMock();
 
   beforeAll(async () => {
     app = await Test.createTestingModule({
@@ -24,10 +19,6 @@ describe('AppController', () => {
         {
           provide: CachedApiService,
           useValue: cachedApiServiceMock,
-        },
-        {
-          provide: 'IOpeningCrawlsService',
-          useValue: openingCrawlsServiceMock,
         },
       ],
     }).compile();

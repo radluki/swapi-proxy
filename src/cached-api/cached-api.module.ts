@@ -3,7 +3,6 @@ import Redis from 'ioredis';
 import { RedisClient, RedisService } from './redis.service';
 import { CachedApiService } from './cached-api.service';
 import { HttpRequestSender } from './http-request-sender';
-import { OpeningCrawlsService } from './opening-crawl.service';
 import { CachedApiController } from './cached-api.controller';
 import { ConfigService } from '@nestjs/config';
 import { HttpModule } from '@nestjs/axios';
@@ -28,12 +27,8 @@ import { HttpModule } from '@nestjs/axios';
     },
     HttpRequestSender,
     CachedApiService,
-    {
-      provide: 'IOpeningCrawlsService',
-      useClass: OpeningCrawlsService,
-    },
   ],
   controllers: [CachedApiController],
-  exports: [CachedApiService, 'IOpeningCrawlsService'],
+  exports: [CachedApiService],
 })
 export class CachedApiModule {}

@@ -1,5 +1,5 @@
 import { OpeningCrawlsService } from './opening-crawl.service';
-import { CachedApiService } from './cached-api.service';
+import { CachedApiService } from '../cached-api/cached-api.service';
 import { mock, instance, when, reset } from 'ts-mockito';
 
 describe('OpeningCrawlsService', () => {
@@ -44,9 +44,7 @@ describe('OpeningCrawlsService', () => {
       results: [{ name: 'Luke Skywalker' }, { name: 'Leia Morgana' }],
     };
     const serializedPage1 = JSON.stringify(page1);
-    when(cachedApiServiceMock.get('/api/people/')).thenResolve(
-      serializedPage1,
-    );
+    when(cachedApiServiceMock.get('/api/people/')).thenResolve(serializedPage1);
 
     const page2 = {
       next: null,
