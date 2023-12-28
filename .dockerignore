@@ -4,8 +4,7 @@ coverage
 .devcontainer
 test
 scripts
-docker-compose*.yml
+docker
 .git
 .gitignore
-Dockerfile
 README.md
