@@ -1,5 +1,4 @@
 import { Injectable } from '@nestjs/common';
-import { createLogger } from '../utils/logger-factory';
 import { CachedApiProxyService } from '../cached-api/cached-api-proxy.service';
 
 const enum SwapiResourceType {
@@ -19,7 +18,6 @@ export interface IGraphqlService {
 
 @Injectable()
 export class GraphqlService {
-  private logger = createLogger(GraphqlService.name);
   constructor(private cachedApiService: CachedApiProxyService) {}
 
   async getPerson(id: number): Promise<any> {
@@ -47,19 +45,21 @@ export class GraphqlService {
   }
 
   private async getResources(
-    resourceTyoe: SwapiResourceType,
+    resourceType: SwapiResourceType,
     name?: string,
     page?: number,
   ): Promise<any> {
+    const queryStr = this.getQueryStr(name, page);
+    const url = `/api/${resourceType}/${queryStr}`;
+    const serilizedResp = await this.cachedApiService.get(url);
+    return JSON.parse(serilizedResp);
+  }
+
+  private getQueryStr(name?: string, page?: number): string {
     const queries: string[] = [];
     name && queries.push(`search=${name}`);
     page && queries.push(`page=${page}`);
-    const queryStr = queries.length ? `?${queries.join('&')}` : '';
-    const url = `/api/${resourceTyoe}/${queryStr}`;
-    this.logger.debug(`resource url: ${url}`);
-    const response = JSON.parse(await this.cachedApiService.get(url));
-    this.logger.debug(`resource response: ${JSON.stringify(response)}`);
-    return response;
+    return queries.length ? `?${queries.join('&')}` : '';
   }
 
   private async getSingleResource(
@@ -67,10 +67,7 @@ export class GraphqlService {
     id: number,
   ): Promise<any> {
     const url = `/api/${resourceType}/${id}`;
-    this.logger.debug(`resource url: ${url}`);
     const serilizedResp = await this.cachedApiService.get(url);
-    const response = JSON.parse(serilizedResp);
-    this.logger.debug(`resource response: ${JSON.stringify(response)}`);
-    return response;
+    return JSON.parse(serilizedResp);
   }
 }
