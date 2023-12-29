@@ -1,0 +1,17 @@
+type Query {
+    author(id: ID!): Author
+    article(id: ID!): Article
+}
+
+type Author {
+    id: ID!
+    name: String!
+    articles: [Article] # A list of articles written by the author
+}
+
+type Article {
+    id: ID!
+    title: String!
+    content: String
+    authors: [Author] # A list of authors of the article
+}

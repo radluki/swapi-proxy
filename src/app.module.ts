@@ -4,6 +4,7 @@ import { SwapiGraphqlModule } from './swapi-graphql/swapi-graphql.module';
 import { ConfigModule } from './config/config.module';
 import { SwapiCustomModule } from './swapi-custom/swapi-custom.module';
 import { HealthcheckController } from './utils/healthcheck.controller';
+import { SchemaGraphqlModule } from './schema-first-graphql/schema-graphql.module';
 
 @Module({
   imports: [
@@ -11,6 +12,7 @@ import { HealthcheckController } from './utils/healthcheck.controller';
     CachedApiModule,
     SwapiGraphqlModule,
     ConfigModule,
+    SchemaGraphqlModule,
   ],
   controllers: [HealthcheckController],
   providers: [],
