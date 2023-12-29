@@ -2,7 +2,8 @@ import { Module } from '@nestjs/common';
 import { GraphQLModule } from '@nestjs/graphql';
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import * as path from 'path';
-import { SwapiResourceProviderService } from './swapi-resource-provider.service';
+import { SwapiResourceProviderAdapter } from './swapi-resource-provider.service';
+import { SwapiResourceProvider } from './swapi-resource-provider';
 import { CachedApiModule } from '../cached-api/cached-api.module';
 import { SwapiResolver } from './swapi.resolver';
 import { SwapiResourcesResolver } from './swapi-resources.resolver';
@@ -29,8 +30,9 @@ function getSchemaPath() {
     SwapiResolver,
     {
       provide: 'ISwapiResourceProviderService',
-      useClass: SwapiResourceProviderService,
+      useClass: SwapiResourceProviderAdapter,
     },
+    SwapiResourceProvider,
   ],
 })
 export class SwapiGraphqlModule {}
