@@ -1,10 +1,10 @@
-import { Test } from '@nestjs/testing';
+import { Test, TestingModule } from '@nestjs/testing';
 import { SwapiResourcesResolver } from './swapi-resources.resolver';
 import { INestApplication } from '@nestjs/common';
 import * as request from 'supertest';
 import { createGraphqlSchemaGeneratorModule } from './swapi-graphql.module';
 
-const mockSwapiResourceProviderService = {
+const serviceMock = {
   getPerson: jest.fn(),
   getPlanet: jest.fn(),
   getStarship: jest.fn(),
@@ -14,20 +14,27 @@ const mockSwapiResourceProviderService = {
 };
 
 describe('SwapiResourcesResolver', () => {
+  let moduleFixture: TestingModule;
   let app: INestApplication;
+  let resolver: SwapiResourcesResolver;
+
+  const name = 'Luke';
+  const page = 3;
+  const id = 2;
 
   beforeAll(async () => {
-    const moduleFixture = await Test.createTestingModule({
+    moduleFixture = await Test.createTestingModule({
       imports: [createGraphqlSchemaGeneratorModule('test-schema.gql')],
       providers: [
         SwapiResourcesResolver,
         {
           provide: 'ISwapiResourceProviderService',
-          useValue: mockSwapiResourceProviderService,
+          useValue: serviceMock,
         },
       ],
     }).compile();
 
+    resolver = moduleFixture.get(SwapiResourcesResolver);
     app = moduleFixture.createNestApplication();
     await app.init();
   });
@@ -41,13 +48,13 @@ describe('SwapiResourcesResolver', () => {
   });
 
   function mockPerson(person) {
-    mockSwapiResourceProviderService.getPerson.mockImplementation(() => {
+    serviceMock.getPerson.mockImplementation(() => {
       return Promise.resolve(person);
     });
   }
 
   function mockPeople(people) {
-    mockSwapiResourceProviderService.getPeople.mockImplementation(() => {
+    serviceMock.getPeople.mockImplementation(() => {
       return Promise.resolve(people);
     });
   }
@@ -61,6 +68,42 @@ describe('SwapiResourcesResolver', () => {
         query: '{ person { name xx } }',
       })
       .expect(400);
+  });
+
+  it('person calls getPerosn', async () => {
+    resolver.person(id);
+    expect(serviceMock.getPerson).toHaveBeenCalledTimes(1);
+    expect(serviceMock.getPerson).toHaveBeenCalledWith(id);
+  });
+
+  it('planet calls getPlanet', async () => {
+    resolver.planet(id);
+    expect(serviceMock.getPlanet).toHaveBeenCalledTimes(1);
+    expect(serviceMock.getPlanet).toHaveBeenCalledWith(id);
+  });
+
+  it('starship calls getStarship', async () => {
+    resolver.starship(id);
+    expect(serviceMock.getStarship).toHaveBeenCalledTimes(1);
+    expect(serviceMock.getStarship).toHaveBeenCalledWith(id);
+  });
+
+  it('people calls getPeople', async () => {
+    resolver.people(name, page);
+    expect(serviceMock.getPeople).toHaveBeenCalledTimes(1);
+    expect(serviceMock.getPeople).toHaveBeenCalledWith(name, page);
+  });
+
+  it('planets calls getPlanets', async () => {
+    resolver.planets(name, page);
+    expect(serviceMock.getPlanets).toHaveBeenCalledTimes(1);
+    expect(serviceMock.getPlanets).toHaveBeenCalledWith(name, page);
+  });
+
+  it('starships calls getStarships', async () => {
+    resolver.starships(name, page);
+    expect(serviceMock.getStarships).toHaveBeenCalledTimes(1);
+    expect(serviceMock.getStarships).toHaveBeenCalledWith(name, page);
   });
 
   describe('valid queries', () => {
@@ -85,7 +128,7 @@ describe('SwapiResourcesResolver', () => {
           expect(res.body.data).toEqual({
             person: { name: person.name },
           });
-          const getPersonMock = mockSwapiResourceProviderService.getPerson;
+          const getPersonMock = serviceMock.getPerson;
           expect(getPersonMock).toHaveBeenCalledTimes(1);
           expect(getPersonMock).toHaveBeenCalledWith(id);
         });
@@ -119,7 +162,7 @@ describe('SwapiResourcesResolver', () => {
               results: people.results.map((p) => ({ name: p.name })),
             },
           });
-          const getPeopleMock = mockSwapiResourceProviderService.getPeople;
+          const getPeopleMock = serviceMock.getPeople;
           expect(getPeopleMock).toHaveBeenCalledTimes(1);
           expect(getPeopleMock).toHaveBeenCalledWith(name, page);
         });
