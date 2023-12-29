@@ -116,6 +116,7 @@ describe('SwapiResourcesResolver', () => {
         name: 'Luke Skaywalker',
         invalid: 'invalid',
       };
+      const filteredPerson = { name: person.name };
       mockPerson(person);
 
       return request(app.getHttpServer())
@@ -126,7 +127,7 @@ describe('SwapiResourcesResolver', () => {
         .expect(200)
         .then((res) => {
           expect(res.body.data).toEqual({
-            person: { name: person.name },
+            person: filteredPerson,
           });
           const getPersonMock = serviceMock.getPerson;
           expect(getPersonMock).toHaveBeenCalledTimes(1);
@@ -149,6 +150,9 @@ describe('SwapiResourcesResolver', () => {
           },
         ],
       };
+      const filteredPeople = {
+        results: people.results.map((p) => ({ name: p.name })),
+      };
       mockPeople(people);
       return request(app.getHttpServer())
         .post('/graphql')
@@ -158,9 +162,7 @@ describe('SwapiResourcesResolver', () => {
         .expect(200)
         .then((res) => {
           expect(res.body.data).toEqual({
-            people: {
-              results: people.results.map((p) => ({ name: p.name })),
-            },
+            people: filteredPeople,
           });
           const getPeopleMock = serviceMock.getPeople;
           expect(getPeopleMock).toHaveBeenCalledTimes(1);
