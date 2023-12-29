@@ -11,12 +11,12 @@ export class CachedApiController {
 
   @Get('/')
   async getRoot() {
-    return await this.cachedApiService.get('/api/');
+    return JSON.parse(await this.cachedApiService.get('/api/'));
   }
 
   @Get(':resource(films|species|vehicles|starships|people|planets)*')
   async proxy(@Req() request: Request) {
     this.logger.log(`proxying ${request.url}`);
-    return await this.cachedApiService.get(request.url);
+    return JSON.parse(await this.cachedApiService.get(request.url));
   }
 }
