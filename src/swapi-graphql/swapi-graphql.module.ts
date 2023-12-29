@@ -7,13 +7,21 @@ import { CachedApiModule } from '../cached-api/cached-api.module';
 import { SwapiResolver } from './swapi.resolver';
 import { SwapiResourcesResolver } from './swapi-resources.resolver';
 
+export function createGraphqlSchemaGeneratorModule(autoSchemaFile: string) {
+  return GraphQLModule.forRoot<ApolloDriverConfig>({
+    driver: ApolloDriver,
+    autoSchemaFile,
+    playground: true,
+  });
+}
+
+function getSchemaPath() {
+  return path.join(process.cwd(), 'schema.gql');
+}
+
 @Module({
   imports: [
-    GraphQLModule.forRoot<ApolloDriverConfig>({
-      driver: ApolloDriver,
-      autoSchemaFile: path.join(process.cwd(), 'schema.gql'),
-      playground: true,
-    }),
+    createGraphqlSchemaGeneratorModule(getSchemaPath()),
     CachedApiModule,
   ],
   providers: [
