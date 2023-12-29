@@ -1,4 +1,4 @@
-import { Controller, Get, Req } from '@nestjs/common';
+import { Controller, Get, Param, ParseIntPipe, Req } from '@nestjs/common';
 import { CachedApiService } from './cached-api.service';
 import { Request } from 'express';
 import { createLogger } from '../utils/logger-factory';
@@ -15,7 +15,11 @@ export class CachedApiController {
   }
 
   @Get(':resource(films|species|vehicles|starships|people|planets)/:id?')
-  async proxy(@Req() request: Request) {
+  async proxy(
+    @Req() request: Request,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    @Param('id', new ParseIntPipe({ optional: true })) id?: number,
+  ) {
     return this.getResponse(request.url);
   }
 

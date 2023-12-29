@@ -64,7 +64,6 @@ describe('CachedApiController', () => {
       ['/api/starships/876'],
       ['/api/people/12/'],
       ['/api/people'],
-      ['/api/people/other-field'],
       ['/api/planets'],
     ])('%s (GET)', (url) => {
       setGetMockImpl(url, response);
@@ -104,6 +103,27 @@ describe('CachedApiController', () => {
           };
           expect(resp.body).toEqual(expected);
         });
+    });
+
+    describe('string in place of id', () => {
+      test.each([['/api/films/xx/'], ['/api/people/other-field']])(
+        '%s (GET)',
+        (url) => {
+          setGetMockImpl(url, response);
+          return request(app.getHttpServer())
+            .get(url)
+            .expect(400)
+            .expect('Content-Type', /json/)
+            .then((resp) => {
+              const expected = {
+                error: 'Bad Request',
+                message: 'Validation failed (numeric string is expected)',
+                statusCode: 400,
+              };
+              expect(resp.body).toEqual(expected);
+            });
+        },
+      );
     });
   });
 });
