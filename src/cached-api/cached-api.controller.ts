@@ -10,13 +10,17 @@ export class CachedApiController {
   constructor(private readonly cachedApiService: CachedApiService) {}
 
   @Get('/')
-  async getRoot() {
-    return JSON.parse(await this.cachedApiService.get('/api/'));
+  async getRoot(@Req() request: Request) {
+    return this.getResponse(request.url);
   }
 
-  @Get(':resource(films|species|vehicles|starships|people|planets)*')
+  @Get(':resource(films|species|vehicles|starships|people|planets)/:id?')
   async proxy(@Req() request: Request) {
-    this.logger.log(`proxying ${request.url}`);
-    return JSON.parse(await this.cachedApiService.get(request.url));
+    return this.getResponse(request.url);
+  }
+
+  private async getResponse(url: string) {
+    this.logger.log(`request for ${url}`);
+    return JSON.parse(await this.cachedApiService.get(url));
   }
 }

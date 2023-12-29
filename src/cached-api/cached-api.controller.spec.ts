@@ -48,13 +48,16 @@ describe('CachedApiController', () => {
   describe('valid paths', () => {
     test.each([
       ['/api/'],
+      ['/api'],
       ['/api/films'],
       ['/api/films/?page=1'],
       ['/api/films/1/'],
       ['/api/species'],
+      ['/api/species/'],
       ['/api/species?name="Luke"'],
       ['/api/species/4/'],
       ['/api/vehicles'],
+      ['/api/vehicles/'],
       ['/api/vehicles/?page=1&name="abc"'],
       ['/api/vehicles/44/'],
       ['/api/starships'],
@@ -63,7 +66,6 @@ describe('CachedApiController', () => {
       ['/api/people'],
       ['/api/people/other-field'],
       ['/api/planets'],
-      ['/api/planets/xxx/yyy/zz/'],
     ])('%s (GET)', (url) => {
       setGetMockImpl(url, response);
       return request(app.getHttpServer())
@@ -86,6 +88,8 @@ describe('CachedApiController', () => {
       ['/api/starshipsx'],
       ['/api/peoplex'],
       ['/api/planetsx'],
+      ['/api/planets/xxx/yyy/zz/'],
+      ['/api/planets/22/yyy'],
     ])('%s (GET)', (url) => {
       setGetMockImpl(url, response);
       return request(app.getHttpServer())
