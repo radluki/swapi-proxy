@@ -31,8 +31,8 @@ export class AnyExceptionFilter implements ExceptionFilter {
       this.logger.warn(`HttpException: ${exception.message}`);
       return exception.getStatus();
     }
-    if (exception instanceof AxiosError) {
-      const status = exception?.response.status;
+    if (exception instanceof AxiosError && exception?.response) {
+      const status = exception.response.status;
       this.logger.warn(
         `AxiosException: message: "${exception.message}", status: ${status}`,
       );
