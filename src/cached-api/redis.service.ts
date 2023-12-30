@@ -2,6 +2,7 @@ import { Injectable, Inject } from '@nestjs/common';
 import { createLogger } from '../utils/logger-factory';
 
 const SECONDS_IN_24H = 86400;
+const timeout = 1000;
 
 export interface RedisClient {
   set(
@@ -35,16 +36,24 @@ export class RedisService implements CacheService {
   }
 
   async get(key: string): Promise<string> {
-    if ((await this.redis.exists(key)) !== 1) {
+    return new Promise<string>((resolve, reject) => {
+      const timeoutHandle = setTimeout(() => {
+        reject(new Error('Cache request timed out'));
+      }, timeout);
+
+      this.redis
+        .get(key)
+        .then((result) => {
+          clearTimeout(timeoutHandle);
+          resolve(result);
+        })
+        .catch((error) => {
+          clearTimeout(timeoutHandle);
+          reject(error);
+        });
+    }).catch((error) => {
+      this.logger.error(`Cache operation failed: ${error}`);
       return null;
-    }
-    try {
-      const value = await this.redis.get(key);
-      this.logger.debug(`Value for "${key}": "${value}"`);
-      return value;
-    } catch (err) {
-      this.logger.error(`Error getting key: ${err}`);
-    }
-    return null;
+    });
   }
 }
