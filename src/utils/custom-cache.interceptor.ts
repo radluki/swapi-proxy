@@ -4,6 +4,8 @@ import { createLogger } from './logger-factory';
 import { catchError, Observable, switchMap, race, throwError } from 'rxjs';
 import { CacheInterceptor } from '@nestjs/cache-manager';
 
+const INTERCEPTOR_TIMEOUT_MSG = 'Timeout on CacheInterceptor.intercept';
+
 @Injectable()
 export class CustomCacheInterceptor extends CacheInterceptor {
   private readonly logger = createLogger(CustomCacheInterceptor.name);
@@ -26,8 +28,7 @@ export class CustomCacheInterceptor extends CacheInterceptor {
 
     const timeout$ = new Observable((subscriber) => {
       timeoutId = setTimeout(() => {
-        this.logger.warn('Timeout on CacheInterceptor.intercept');
-        subscriber.error(new Error('timeout'));
+        subscriber.error(new Error(INTERCEPTOR_TIMEOUT_MSG));
         subscriber.complete();
       }, this.timeoutDuration);
     });
@@ -40,7 +41,7 @@ export class CustomCacheInterceptor extends CacheInterceptor {
         return result$;
       }),
       catchError((err) => {
-        if (err.message === 'timeout') {
+        if (err.message === INTERCEPTOR_TIMEOUT_MSG) {
           this.logger.error(`${key} cache access failed with: ${err.message}`);
           return next.handle();
         }
