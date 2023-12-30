@@ -1,7 +1,15 @@
 import { ExecutionContext, Injectable, CallHandler } from '@nestjs/common';
 import { Request } from 'express';
 import { createLogger } from './logger-factory';
-import { catchError, Observable, switchMap, race, throwError } from 'rxjs';
+import {
+  catchError,
+  Observable,
+  switchMap,
+  race,
+  throwError,
+  timer,
+  map,
+} from 'rxjs';
 import { CacheInterceptor } from '@nestjs/cache-manager';
 
 class InterceptorTimeoutError extends Error {
@@ -28,20 +36,18 @@ export class CustomCacheInterceptor extends CacheInterceptor {
     context: ExecutionContext,
     next: CallHandler,
   ): Promise<Observable<any>> {
-    let timeoutId: NodeJS.Timeout;
     const key = this.trackBy(context);
 
-    const timeout$ = new Observable((subscriber) => {
-      timeoutId = setTimeout(() => {
-        subscriber.error(new InterceptorTimeoutError());
-        subscriber.complete();
-      }, this.timeoutDuration);
-    });
+    const timeout$ = timer(this.timeoutDuration).pipe(
+      map(() => {
+        this.logger.debug(`Interceptor timeout for key ${key}`);
+        return throwError(() => new InterceptorTimeoutError());
+      }),
+    );
     const intercept$ = super.intercept(context, next);
 
     return race(intercept$, timeout$).pipe(
       switchMap((result$: Observable<any>) => {
-        clearTimeout(timeoutId);
         this.logger.debug(`Attempting to access cache for key ${key}`);
         return result$;
       }),
