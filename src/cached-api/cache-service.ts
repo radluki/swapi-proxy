@@ -2,20 +2,15 @@ import { Injectable, Inject } from '@nestjs/common';
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import { Cache } from 'cache-manager';
 import { createLogger } from '../utils/logger-factory';
-import { CacheService } from './redis.service';
-import {
-  tap,
-  race,
-  from,
-  timer,
-  map,
-  catchError,
-  firstValueFrom,
-  of,
-} from 'rxjs';
+import { tap, race, from, timer, map, catchError, firstValueFrom } from 'rxjs';
 
 const MILLISECONDS_IN_24H = 86400 * 1000;
 const timeout = 1000;
+
+export interface CacheService {
+  set(key: string, value: string): Promise<void>;
+  get(key: string): Promise<string>;
+}
 
 @Injectable()
 export class ConcreteCacheService implements CacheService {

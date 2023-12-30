@@ -1,5 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { CacheService } from './redis.service';
+import { CacheService } from './cache-service';
 import { createLogger } from '../utils/logger-factory';
 import { HttpRequestSender } from './http-request-sender';
 import { ConfigService } from '@nestjs/config';

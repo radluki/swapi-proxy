@@ -1,6 +1,6 @@
 import { instance, mock, when, verify, anything, reset } from 'ts-mockito';
 import { CachedApiService } from './cached-api.service';
-import { CacheService } from './redis.service';
+import { CacheService } from './cache-service';
 import { HttpRequestSender } from './http-request-sender';
 import { ConfigService } from '@nestjs/config';
 
