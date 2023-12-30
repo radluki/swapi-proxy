@@ -4,6 +4,7 @@ import { INestApplication } from '@nestjs/common';
 import { CachedApiService } from './cached-api.service';
 import * as request from 'supertest';
 import { CacheModule } from '@nestjs/cache-manager';
+import { ConfigModule } from '@nestjs/config';
 
 describe('CachedApiController', () => {
   let app: INestApplication;
@@ -18,6 +19,7 @@ describe('CachedApiController', () => {
         CacheModule.register({
           ttl: 1, // 1 millisecond
         }),
+        ConfigModule,
       ],
       controllers: [CachedApiController],
       providers: [

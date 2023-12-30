@@ -37,7 +37,7 @@ export class CachedApiService {
   private async getFromSwapi(relativeUrl: string): Promise<string> {
     this.logger.log(`Fetching data directly from api for "${relativeUrl}"`);
     const fullUrl = `${this.swapiUrl}${relativeUrl}`;
-    const responseDataStr = await this.httpReqSender.get(`${fullUrl}`);
+    const responseDataStr = await this.httpReqSender.get(fullUrl);
 
     if (!responseDataStr) return responseDataStr;
     return responseDataStr.replaceAll(this.swapiUrl, this.swapiProxyDomain);

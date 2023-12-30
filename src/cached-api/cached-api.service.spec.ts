@@ -1,9 +1,17 @@
-import { instance, mock, when, verify, anything, reset } from 'ts-mockito';
+import {
+  instance,
+  mock,
+  when,
+  verify,
+  anything,
+  reset,
+  deepEqual,
+} from 'ts-mockito';
 import { CachedApiService } from './cached-api.service';
 import { CacheService } from './cache-service';
 import { HttpRequestSender } from './http-request-sender';
 import { ConfigService } from '@nestjs/config';
-import { PORT } from '../config/config';
+import { PORT, SWAPI_PROXY_URL, SWAPI_URL } from '../config/config';
 
 describe('CachedApiService', () => {
   let sut: CachedApiService;
@@ -28,10 +36,10 @@ describe('CachedApiService', () => {
     httpRequestSenderMock = mock<HttpRequestSender>();
     configServiceMock = mock<ConfigService>();
 
-    when(configServiceMock.get<string>('swapiProxyUrl')).thenReturn(
+    when(configServiceMock.get<string>(SWAPI_PROXY_URL)).thenReturn(
       swapiProxyDomain,
     );
-    when(configServiceMock.get<string>('swapiUrl')).thenReturn(swapiUrl);
+    when(configServiceMock.get<string>(SWAPI_URL)).thenReturn(swapiUrl);
     when(configServiceMock.get<number>(PORT)).thenReturn(3000);
   });
 
@@ -59,7 +67,9 @@ describe('CachedApiService', () => {
 
     it('should access api and set cache when cache returns null', async () => {
       when(cacheServiceMock.get(key)).thenResolve(null);
-      when(httpRequestSenderMock.get(fullUrlWithKey)).thenResolve(valueStr);
+      when(httpRequestSenderMock.get(deepEqual(fullUrlWithKey))).thenResolve(
+        valueStr,
+      );
 
       const resultStr = await sut.get(relativeUrl);
       expect(resultStr).toBe(valueStr);
