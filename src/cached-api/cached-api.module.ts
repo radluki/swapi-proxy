@@ -6,9 +6,15 @@ import { HttpRequestSender } from './http-request-sender';
 import { CachedApiController } from './cached-api.controller';
 import { ConfigService } from '@nestjs/config';
 import { HttpModule } from '@nestjs/axios';
+import { CacheModule } from '@nestjs/cache-manager';
 
 @Module({
-  imports: [HttpModule],
+  imports: [
+    HttpModule,
+    CacheModule.register({
+      ttl: 10 * 1000, // 10 seconds
+    }),
+  ],
   providers: [
     {
       provide: 'RedisClient',

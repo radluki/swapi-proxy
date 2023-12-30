@@ -1,7 +1,15 @@
-import { Controller, Get, Param, ParseIntPipe, Req } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Param,
+  ParseIntPipe,
+  Req,
+  UseInterceptors,
+} from '@nestjs/common';
 import { CachedApiService } from './cached-api.service';
 import { Request } from 'express';
 import { createLogger } from '../utils/logger-factory';
+import { CustomCacheInterceptor } from '../utils/custom-cache.interceptor';
 
 @Controller('api')
 export class CachedApiController {
@@ -15,6 +23,7 @@ export class CachedApiController {
   }
 
   @Get(':resource(films|species|vehicles|starships|people|planets)/:id?')
+  @UseInterceptors(CustomCacheInterceptor)
   async proxy(
     @Req() request: Request,
     // eslint-disable-next-line @typescript-eslint/no-unused-vars

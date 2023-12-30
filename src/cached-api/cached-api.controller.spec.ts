@@ -3,6 +3,7 @@ import { CachedApiController } from './cached-api.controller';
 import { INestApplication } from '@nestjs/common';
 import { CachedApiService } from './cached-api.service';
 import * as request from 'supertest';
+import { CacheModule } from '@nestjs/cache-manager';
 
 describe('CachedApiController', () => {
   let app: INestApplication;
@@ -13,7 +14,11 @@ describe('CachedApiController', () => {
 
   beforeAll(async () => {
     const moduleFixture = await Test.createTestingModule({
-      imports: [],
+      imports: [
+        CacheModule.register({
+          ttl: 1, // 1 millisecond
+        }),
+      ],
       controllers: [CachedApiController],
       providers: [
         {
