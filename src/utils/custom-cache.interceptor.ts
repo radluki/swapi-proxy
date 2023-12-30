@@ -1,7 +1,7 @@
 import { ExecutionContext, Injectable, CallHandler } from '@nestjs/common';
 import { Request } from 'express';
 import { createLogger } from './logger-factory';
-import { catchError, Observable, switchMap, throwError, race, tap } from 'rxjs';
+import { catchError, Observable, switchMap, race } from 'rxjs';
 import { CacheInterceptor } from '@nestjs/cache-manager';
 
 @Injectable()
@@ -34,10 +34,10 @@ export class CustomCacheInterceptor extends CacheInterceptor {
     const intercept$ = super.intercept(context, next);
 
     return race(intercept$, timeout$).pipe(
-      switchMap((result: Observable<any>) => {
+      switchMap((result$: Observable<any>) => {
         clearTimeout(timeoutId);
         this.logger.debug(`Attempting to access cache for key ${key}`);
-        return result;
+        return result$;
       }),
       catchError((err) => {
         this.logger.error(`${key} cache access failed with: ${err.message}`);

@@ -24,26 +24,15 @@ export class CachedApiService {
   }
 
   async get(relativeUrl: string): Promise<string> {
-    const cachedValue = await this.getFromCache(this.getKey(relativeUrl));
-    return cachedValue || this.getFromSwapi(relativeUrl);
-  }
+    const key = `:${this.port}${relativeUrl}`;
+    const cachedValue = await this.cacheService.get(key);
+    if (cachedValue) return cachedValue;
 
-  private getKey(relativeUrl: string): string {
-    return `:${this.port}${relativeUrl}`;
-  }
-
-  private async getFromCache(key: string): Promise<string> {
-    try {
-      const cachedValue = await this.cacheService.get(key);
-      if (cachedValue) {
-        this.logger.debug(`Cache hit for key "${key}"`);
-        return cachedValue;
-      }
-      this.logger.debug(`Cache miss for key "${key}"`);
-    } catch (err) {
-      this.logger.warn(`Exception during cache check: ${err.message}`);
-    }
-    return null;
+    const fetchedValue = await this.getFromSwapi(relativeUrl);
+    this.logger.log(`Fetched data for "${relativeUrl}"`);
+    this.logger.debug(`Data fetched for "${relativeUrl}": ${fetchedValue}`);
+    if (fetchedValue) this.cacheService.set(key, fetchedValue);
+    return fetchedValue;
   }
 
   private async getFromSwapi(relativeUrl: string): Promise<string> {
@@ -51,17 +40,7 @@ export class CachedApiService {
     const fullUrl = `${this.swapiUrl}${relativeUrl}`;
     const responseDataStr = await this.httpReqSender.get(`${fullUrl}`);
 
-    if (!responseDataStr) {
-      return responseDataStr;
-    }
-    const dataWithOverridenDomain = responseDataStr.replaceAll(
-      this.swapiUrl,
-      this.swapiProxyDomain,
-    );
-    this.cacheService.set(this.getKey(relativeUrl), dataWithOverridenDomain);
-    this.logger.debug(
-      `Fetched data for "${relativeUrl}": ${dataWithOverridenDomain}`,
-    );
-    return dataWithOverridenDomain;
+    if (!responseDataStr) return responseDataStr;
+    return responseDataStr.replaceAll(this.swapiUrl, this.swapiProxyDomain);
   }
 }

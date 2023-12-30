@@ -45,10 +45,12 @@ export class RedisService implements CacheService {
         .get(key)
         .then((result) => {
           clearTimeout(timeoutHandle);
+          if (result) this.logger.log(`Key ${key} retrieved successfully`);
           resolve(result);
         })
         .catch((error) => {
           clearTimeout(timeoutHandle);
+          this.logger.error(`Error retrieving key: ${error}`);
           reject(error);
         });
     }).catch((error) => {
