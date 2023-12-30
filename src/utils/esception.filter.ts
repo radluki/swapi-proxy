@@ -18,6 +18,8 @@ export class AnyExceptionFilter implements ExceptionFilter {
     const request = ctx.getRequest();
     const status = this.getStatus(exception);
 
+    this.logger.error(exception);
+
     response.status(status).json({
       statusCode: status,
       timestamp: new Date().toISOString(),
@@ -28,15 +30,10 @@ export class AnyExceptionFilter implements ExceptionFilter {
 
   private getStatus(exception: any): number {
     if (exception instanceof HttpException) {
-      this.logger.warn(`HttpException: ${exception.message}`);
       return exception.getStatus();
     }
     if (exception instanceof AxiosError && exception?.response) {
-      const status = exception.response.status;
-      this.logger.warn(
-        `AxiosException: message: "${exception.message}", status: ${status}`,
-      );
-      return status;
+      return exception.response.status;
     }
     return HttpStatus.INTERNAL_SERVER_ERROR;
   }
