@@ -8,6 +8,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { HttpModule } from '@nestjs/axios';
 import { CacheModule } from '@nestjs/cache-manager';
 import { redisStore } from 'cache-manager-ioredis-yet';
+import { ConcreteCacheService } from './cache-service';
 
 @Module({
   imports: [
@@ -37,7 +38,7 @@ import { redisStore } from 'cache-manager-ioredis-yet';
     },
     {
       provide: 'CacheService',
-      useClass: RedisService,
+      useClass: ConcreteCacheService,
     },
     HttpRequestSender,
     CachedApiService,

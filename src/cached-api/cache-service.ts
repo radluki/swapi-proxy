@@ -1,34 +1,21 @@
 import { Injectable, Inject } from '@nestjs/common';
+import { CACHE_MANAGER } from '@nestjs/cache-manager';
+import { Cache } from 'cache-manager';
 import { createLogger } from '../utils/logger-factory';
+import { CacheService } from './redis.service';
 
-const SECONDS_IN_24H = 86400;
+const MILLISECONDS_IN_24H = 86400 * 1000;
 const timeout = 1000;
 
-export interface RedisClient {
-  set(
-    key: string,
-    value: string,
-    mode: string,
-    seconds: number,
-  ): Promise<string>;
-  get(key: string): Promise<string>;
-  exists(key: string): Promise<number>;
-}
-
-export interface CacheService {
-  set(key: string, value: string): Promise<void>;
-  get(key: string): Promise<string>;
-}
-
 @Injectable()
-export class RedisService implements CacheService {
-  private readonly logger = createLogger(RedisService.name);
+export class ConcreteCacheService implements CacheService {
+  private readonly logger = createLogger(ConcreteCacheService.name);
 
-  constructor(@Inject('RedisClient') private readonly redis: RedisClient) {}
+  constructor(@Inject(CACHE_MANAGER) private cacheManager: Cache) {}
 
   async set(key: string, value: string) {
     try {
-      await this.redis.set(key, value, 'EX', SECONDS_IN_24H);
+      await this.cacheManager.set(key, value, MILLISECONDS_IN_24H);
       this.logger.log(`Key ${key} set successfully`);
     } catch (err) {
       this.logger.error(`Error setting key: ${err}`);
@@ -41,12 +28,12 @@ export class RedisService implements CacheService {
         reject(new Error('Cache request timed out'));
       }, timeout);
 
-      this.redis
+      this.cacheManager
         .get(key)
-        .then((result) => {
+        .then((result: any) => {
           clearTimeout(timeoutHandle);
           if (result) this.logger.log(`Key ${key} retrieved successfully`);
-          resolve(result);
+          resolve(JSON.stringify(result));
         })
         .catch((error) => {
           clearTimeout(timeoutHandle);
