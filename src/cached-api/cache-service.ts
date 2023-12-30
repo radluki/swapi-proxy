@@ -2,7 +2,16 @@ import { Injectable, Inject } from '@nestjs/common';
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import { Cache } from 'cache-manager';
 import { createLogger } from '../utils/logger-factory';
-import { tap, race, from, timer, map, catchError, firstValueFrom } from 'rxjs';
+import {
+  tap,
+  race,
+  from,
+  timer,
+  map,
+  catchError,
+  firstValueFrom,
+  of,
+} from 'rxjs';
 import { ConfigService } from '@nestjs/config';
 import { REDIS_TTL_MS, TIMEOUT_MILLISECONDS } from '../config/config';
 
@@ -49,7 +58,7 @@ export class ConcreteCacheService implements CacheService {
       }),
       catchError((error) => {
         this.logger.error(`Error retrieving ${key}: ${error}`);
-        return null;
+        return of(null);
       }),
     );
 
