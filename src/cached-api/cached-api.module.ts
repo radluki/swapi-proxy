@@ -4,7 +4,7 @@ import { RedisClient, RedisService } from './redis.service';
 import { CachedApiService } from './cached-api.service';
 import { HttpRequestSender } from './http-request-sender';
 import { CachedApiController } from './cached-api.controller';
-import { ConfigService } from '@nestjs/config';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import { HttpModule } from '@nestjs/axios';
 import { CacheModule } from '@nestjs/cache-manager';
 import { redisStore } from 'cache-manager-ioredis-yet';
@@ -12,11 +12,15 @@ import { redisStore } from 'cache-manager-ioredis-yet';
 @Module({
   imports: [
     HttpModule,
-    CacheModule.register({
-      store: redisStore,
-      host: 'redis',
-      port: 6379,
-      ttl: 10 * 1000, // 10 seconds
+    CacheModule.registerAsync({
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: (configService: ConfigService) => ({
+        store: redisStore,
+        host: configService.get<string>('redis.host'),
+        port: configService.get<number>('redis.port'),
+        ttl: 10 * 1000, // 10 seconds
+      }),
     }),
   ],
   providers: [
