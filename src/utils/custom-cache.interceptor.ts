@@ -11,7 +11,7 @@ export class CustomCacheInterceptor extends CacheInterceptor {
     const request = context.switchToHttp().getRequest<Request>();
     const path = request.path;
     const port = request.socket.localPort;
-    const key = `${port}:${path}`;
+    const key = `nest-cache:${port}${path}`;
     this.logger.debug(`Key ${key}`);
     return key;
   }

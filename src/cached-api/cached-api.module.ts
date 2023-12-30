@@ -7,11 +7,15 @@ import { CachedApiController } from './cached-api.controller';
 import { ConfigService } from '@nestjs/config';
 import { HttpModule } from '@nestjs/axios';
 import { CacheModule } from '@nestjs/cache-manager';
+import { redisStore } from 'cache-manager-ioredis-yet';
 
 @Module({
   imports: [
     HttpModule,
     CacheModule.register({
+      store: redisStore,
+      host: 'redis',
+      port: 6379,
       ttl: 10 * 1000, // 10 seconds
     }),
   ],
