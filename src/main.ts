@@ -5,6 +5,7 @@ import * as swaggerUi from 'swagger-ui-express';
 import * as YAML from 'yamljs';
 import { getNestLogLevels } from './utils/nest-log-levels';
 import { ConfigService } from '@nestjs/config';
+import { PORT } from './config/config';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
@@ -14,7 +15,7 @@ async function bootstrap() {
 
   setUpSwagger(app);
 
-  const port = app.get(ConfigService).get('PORT');
+  const port = app.get(ConfigService).get(PORT);
   await app.listen(port);
 }
 

@@ -3,6 +3,7 @@ import { CacheService } from './cache-service';
 import { createLogger } from '../utils/logger-factory';
 import { HttpRequestSender } from './http-request-sender';
 import { ConfigService } from '@nestjs/config';
+import { PORT, SWAPI_URL, SWAPI_PROXY_URL } from '../config/config';
 
 @Injectable()
 export class CachedApiService {
@@ -16,11 +17,9 @@ export class CachedApiService {
     @Inject('CacheService') private readonly cacheService: CacheService,
     configService: ConfigService,
   ) {
-    this.swapiProxyDomain = configService.get<string>('swapiProxyUrl');
-    this.swapiUrl = configService.get<string>('swapiUrl');
-    this.port = configService.get<number>('PORT');
-    this.logger.debug(`swapiProxyDomain: ${this.swapiProxyDomain}`);
-    this.logger.debug(`swapiUrl: ${this.swapiUrl}`);
+    this.swapiProxyDomain = configService.get<string>(SWAPI_PROXY_URL);
+    this.swapiUrl = configService.get<string>(SWAPI_URL);
+    this.port = configService.get<number>(PORT);
   }
 
   async get(relativeUrl: string): Promise<string> {

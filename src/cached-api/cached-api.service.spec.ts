@@ -3,6 +3,7 @@ import { CachedApiService } from './cached-api.service';
 import { CacheService } from './cache-service';
 import { HttpRequestSender } from './http-request-sender';
 import { ConfigService } from '@nestjs/config';
+import { PORT } from '../config/config';
 
 describe('CachedApiService', () => {
   let sut: CachedApiService;
@@ -31,7 +32,7 @@ describe('CachedApiService', () => {
       swapiProxyDomain,
     );
     when(configServiceMock.get<string>('swapiUrl')).thenReturn(swapiUrl);
-    when(configServiceMock.get<number>('PORT')).thenReturn(3000);
+    when(configServiceMock.get<number>(PORT)).thenReturn(3000);
   });
 
   beforeEach(async () => {
