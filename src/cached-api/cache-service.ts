@@ -39,7 +39,6 @@ export class ConcreteCacheService implements CacheService {
           tap((result) => {
             if (result) this.logger.log(`Key ${key} retrieved successfully`);
           }),
-          map((result) => JSON.stringify(result)),
         ),
         timer(timeout).pipe(
           map(() => {

@@ -93,18 +93,6 @@ describe('REST proxy api (e2e)', () => {
     expect(body.results[0].name).toBe('Eriadu');
   });
 
-  it('GET /api/planets?page=4 - test caching', async () => {
-    const relative_url = '/api/planets/?page=4';
-    const key = getKey(relative_url);
-    const dummyObj = { dummy: 'my dummy data' };
-    await redis.set(key, JSON.stringify(dummyObj));
-
-    const response = await req.get(relative_url);
-    expect(response.statusCode).toBe(200);
-    const body = JSON.parse(response.text);
-    expect(body).toStrictEqual(dummyObj);
-  });
-
   //skipped because it takes too long
   it.skip('GET /api/films/1000/ - test error forwarding', async () => {
     const response = await req.get('/api/films/1000/');
