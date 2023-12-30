@@ -34,6 +34,7 @@ export class CachedApiController {
 
   private async getResponse(url: string) {
     this.logger.log(`request for ${url}`);
-    return JSON.parse(await this.cachedApiService.get(url));
+    const resultStr = await this.cachedApiService.get(url);
+    return JSON.parse(resultStr);
   }
 }

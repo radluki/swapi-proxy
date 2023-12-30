@@ -36,20 +36,19 @@ export class ConcreteCacheService implements CacheService {
     return firstValueFrom(
       race(
         from(this.cacheManager.get<any>(key)).pipe(
-          tap((result) => {
-            if (result) this.logger.log(`Key ${key} retrieved successfully`);
+          tap(
+            (result) =>
+              result && this.logger.log(`Key ${key} retrieved successfully`),
+          ),
+          catchError((error) => {
+            this.logger.error(`Error retrieving ${key}: ${error}`);
+            return null;
           }),
         ),
         timer(timeout).pipe(
-          map(() => {
-            throw new Error('Cache request timed out');
-          }),
+          tap(() => this.logger.debug(`Timeout for key ${key}`)),
+          map(() => null),
         ),
-      ).pipe(
-        catchError((error) => {
-          this.logger.error(`Error retrieving ${key}: ${error}`);
-          return of(null);
-        }),
       ),
     );
   }
