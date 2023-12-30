@@ -41,7 +41,7 @@ export class CustomCacheInterceptor extends CacheInterceptor {
     const timeout$ = timer(this.timeoutDuration).pipe(
       map(() => {
         this.logger.debug(`Interceptor timeout for key ${key}`);
-        return throwError(() => new InterceptorTimeoutError());
+        throw new InterceptorTimeoutError();
       }),
     );
     const intercept$ = super.intercept(context, next);

@@ -3,6 +3,16 @@ import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import { Cache } from 'cache-manager';
 import { createLogger } from '../utils/logger-factory';
 import { CacheService } from './redis.service';
+import {
+  tap,
+  race,
+  from,
+  timer,
+  map,
+  catchError,
+  firstValueFrom,
+  of,
+} from 'rxjs';
 
 const MILLISECONDS_IN_24H = 86400 * 1000;
 const timeout = 1000;
@@ -23,26 +33,25 @@ export class ConcreteCacheService implements CacheService {
   }
 
   async get(key: string): Promise<string> {
-    return new Promise<string>((resolve, reject) => {
-      const timeoutHandle = setTimeout(() => {
-        reject(new Error('Cache request timed out'));
-      }, timeout);
-
-      this.cacheManager
-        .get(key)
-        .then((result: any) => {
-          clearTimeout(timeoutHandle);
-          if (result) this.logger.log(`Key ${key} retrieved successfully`);
-          resolve(JSON.stringify(result));
-        })
-        .catch((error) => {
-          clearTimeout(timeoutHandle);
+    return firstValueFrom(
+      race(
+        from(this.cacheManager.get<any>(key)).pipe(
+          tap((result) => {
+            if (result) this.logger.log(`Key ${key} retrieved successfully`);
+          }),
+          map((result) => JSON.stringify(result)),
+        ),
+        timer(timeout).pipe(
+          map(() => {
+            throw new Error('Cache request timed out');
+          }),
+        ),
+      ).pipe(
+        catchError((error) => {
           this.logger.error(`Error retrieving ${key}: ${error}`);
-          reject(error);
-        });
-    }).catch((error) => {
-      this.logger.error(`Get ${key} from cache failed: ${error}`);
-      return null;
-    });
+          return of(null);
+        }),
+      ),
+    );
   }
 }
