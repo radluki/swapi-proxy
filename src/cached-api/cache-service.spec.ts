@@ -69,12 +69,30 @@ describe('ConcreteCacheService', () => {
     expect(result).toBeNull();
   });
 
+  it('get should return value if returned short before timeout - real timeout', async () => {
+    when(cacheMock.get(key)).thenReturn(
+      <any>timer(timeout - 100).pipe(map(() => value)),
+    );
+    const result = await sut.get(key);
+    expect(result).toBe(value);
+  });
+
   it('get should return null on timeout - real timeout', async () => {
     when(cacheMock.get(key)).thenReturn(
       <any>timer(timeout + 100).pipe(map(() => value)),
     );
     const result = await sut.get(key);
     expect(result).toBeNull();
+  });
+
+  it('get should return value if returned short before timeout', async () => {
+    testScheduler.run(async ({ cold }) => {
+      const cacheManagerObservable = cold('900ms c|', { c: value });
+      when(cacheMock.get(key)).thenReturn(<any>cacheManagerObservable);
+
+      const result = await sut.get(key);
+      expect(result).toBe(value);
+    });
   });
 
   it('get should return null on timeout', async () => {
