@@ -22,27 +22,26 @@ export class CustomCacheInterceptor extends CacheInterceptor {
     next: CallHandler,
   ): Promise<Observable<any>> {
     let timeoutId: NodeJS.Timeout;
-    const timeoutObservable = new Observable((subscriber) => {
+    const key = this.trackBy(context);
+
+    const timeout$ = new Observable((subscriber) => {
       timeoutId = setTimeout(() => {
         this.logger.warn('Timeout on CacheInterceptor.intercept');
-        subscriber.next(undefined);
+        subscriber.error(new Error('timeout'));
         subscriber.complete();
       }, this.timeoutDuration);
     });
-    return race(super.intercept(context, next), timeoutObservable).pipe(
-      catchError((err) => {
-        this.logger.warn(`Race error: ${err.message}`);
-        return throwError(() => err);
-      }),
-      switchMap((result: Observable<any> | undefined) => {
-        const key = this.trackBy(context);
-        if (result === undefined) {
-          this.logger.warn(`Cache operation timed out for key ${key}`);
-          return next.handle();
-        }
+    const intercept$ = super.intercept(context, next);
+
+    return race(intercept$, timeout$).pipe(
+      switchMap((result: Observable<any>) => {
         clearTimeout(timeoutId);
         this.logger.debug(`Attempting to access cache for key ${key}`);
         return result;
+      }),
+      catchError((err) => {
+        this.logger.error(`${key} cache access failed with: ${err.message}`);
+        return next.handle();
       }),
     );
   }
