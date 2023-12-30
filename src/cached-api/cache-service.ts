@@ -33,23 +33,27 @@ export class ConcreteCacheService implements CacheService {
   }
 
   async get(key: string): Promise<string> {
-    return firstValueFrom(
-      race(
-        from(this.cacheManager.get<any>(key)).pipe(
-          tap(
-            (result) =>
-              result && this.logger.log(`Key ${key} retrieved successfully`),
-          ),
-          catchError((error) => {
-            this.logger.error(`Error retrieving ${key}: ${error}`);
-            return null;
-          }),
-        ),
-        timer(timeout).pipe(
-          tap(() => this.logger.debug(`Timeout for key ${key}`)),
-          map(() => null),
-        ),
-      ),
+    const timeout$ = timer(timeout).pipe(
+      map(() => {
+        this.logger.debug(`Cache timeout for key ${key}`);
+        return null;
+      }),
     );
+
+    const cache$ = from(this.cacheManager.get<any>(key)).pipe(
+      tap(
+        (result) =>
+          result && this.logger.debug(`Key ${key} retrieved successfully`),
+      ),
+      tap((result) => {
+        !result && this.logger.debug(`Key ${key} not found`);
+      }),
+      catchError((error) => {
+        this.logger.error(`Error retrieving ${key}: ${error}`);
+        return null;
+      }),
+    );
+
+    return firstValueFrom(race(cache$, timeout$));
   }
 }
