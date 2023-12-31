@@ -40,7 +40,16 @@ describe('HttpRequestSender', () => {
       expect(result).toBe(dataStr);
     });
 
-    it('should propagate error', async () => {
+    it('should propagate error when hhpService throws', async () => {
+      const error = new Error('error');
+      httpService.get.mockImplementation(() => {
+        throw error;
+      });
+
+      await expect(sut.get(URL)).rejects.toThrow('error');
+    });
+
+    it('should propagate error when hhpService returns error observable', async () => {
       const error = new Error('error');
       httpService.get.mockImplementation(() => throwError(() => error));
 

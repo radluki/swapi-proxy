@@ -7,16 +7,11 @@ import { SWAPI_URL, SWAPI_PROXY_URL } from '../config/config';
 @Injectable()
 export class ApiProxyService {
   private readonly logger = createLogger(ApiProxyService.name);
-  private readonly swapiProxyDomain: string;
-  private readonly swapiUrl: string;
 
   constructor(
     private readonly httpReqSender: HttpRequestSender,
-    configService: ConfigService,
-  ) {
-    this.swapiProxyDomain = configService.get<string>(SWAPI_PROXY_URL);
-    this.swapiUrl = configService.get<string>(SWAPI_URL);
-  }
+    private readonly configService: ConfigService,
+  ) {}
 
   async get(relativeUrl: string): Promise<string> {
     const fetchedValue = await this.getFromSwapi(relativeUrl);
@@ -26,11 +21,13 @@ export class ApiProxyService {
   }
 
   private async getFromSwapi(relativeUrl: string): Promise<string> {
+    const swapiUrl = this.configService.get<string>(SWAPI_URL);
     this.logger.log(`Fetching data directly from api for "${relativeUrl}"`);
-    const fullUrl = `${this.swapiUrl}${relativeUrl}`;
+    const fullUrl = `${swapiUrl}${relativeUrl}`;
     const responseDataStr = await this.httpReqSender.get(fullUrl);
 
     if (!responseDataStr) return responseDataStr;
-    return responseDataStr.replaceAll(this.swapiUrl, this.swapiProxyDomain);
+    const swapiProxyDomain = this.configService.get<string>(SWAPI_PROXY_URL);
+    return responseDataStr.replaceAll(swapiUrl, swapiProxyDomain);
   }
 }
