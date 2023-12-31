@@ -5,21 +5,23 @@ import { ConfigService } from '@nestjs/config';
 import { PORT } from '../config/config';
 import { ApiProxyService } from './api-proxy-service';
 
+export function getCacheKey(relativeUrl: string, port: number): string {
+  return `:${port}${relativeUrl}`;
+}
+
 @Injectable()
 export class CachedApiService {
   private readonly logger = createLogger(CachedApiService.name);
-  private readonly port: number;
 
   constructor(
     @Inject('CacheService') private readonly cacheService: CacheService,
-    configService: ConfigService,
+    private readonly configService: ConfigService,
     private readonly apiProxyService: ApiProxyService,
-  ) {
-    this.port = configService.get<number>(PORT);
-  }
+  ) {}
 
   async get(relativeUrl: string): Promise<string> {
-    const key = `:${this.port}${relativeUrl}`;
+    const port = this.configService.get<number>(PORT);
+    const key = getCacheKey(relativeUrl, port);
     const cachedValue = await this.cacheService.get(key);
     if (cachedValue) return cachedValue;
 

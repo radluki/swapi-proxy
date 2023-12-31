@@ -6,6 +6,7 @@ import { CacheInterceptor } from '@nestjs/cache-manager';
 import { Reflector } from '@nestjs/core';
 import { ConfigService } from '@nestjs/config';
 import { TIMEOUT_MILLISECONDS } from '../config/config';
+import { getCacheKey } from '../cached-api/cached-api.service';
 
 @Injectable()
 export class CustomCacheInterceptor extends CacheInterceptor {
@@ -29,8 +30,7 @@ export class CustomCacheInterceptor extends CacheInterceptor {
     const request = context.switchToHttp().getRequest<Request>();
     const path = request.path;
     const port = request.socket.localPort;
-    const key = `:${port}${path}`;
-    return key;
+    return getCacheKey(path, port);
   }
 
   async intercept(
