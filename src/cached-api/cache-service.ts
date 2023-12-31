@@ -61,6 +61,12 @@ export class ConcreteCacheService implements CacheService {
         this.logger.error(`Error retrieving ${key}: ${error}`);
         return of(null);
       }),
+      map((result) => {
+        if (!result || typeof result === 'string') return result;
+        // interceptor caches as object, cache service as string
+        this.logger.warn(`Key ${key} is cached as ${typeof result}`);
+        return JSON.stringify(result);
+      }),
     );
 
     return firstValueFrom(race(cache$, timeout$));

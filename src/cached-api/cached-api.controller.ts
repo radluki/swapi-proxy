@@ -6,16 +6,16 @@ import {
   Req,
   UseInterceptors,
 } from '@nestjs/common';
-import { CachedApiService } from './cached-api.service';
 import { Request } from 'express';
 import { createLogger } from '../utils/logger-factory';
 import { CustomCacheInterceptor } from '../utils/custom-cache.interceptor';
+import { ApiProxyService } from './api-proxy-service';
 
 @Controller('api')
 export class CachedApiController {
   private readonly logger = createLogger(CachedApiController.name);
 
-  constructor(private readonly cachedApiService: CachedApiService) {}
+  constructor(private readonly cachedApiService: ApiProxyService) {}
 
   @Get('/')
   async getRoot(@Req() request: Request) {

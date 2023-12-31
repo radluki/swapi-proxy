@@ -1,14 +1,14 @@
 import { Test } from '@nestjs/testing';
 import { CachedApiController } from './cached-api.controller';
 import { INestApplication } from '@nestjs/common';
-import { CachedApiService } from './cached-api.service';
 import * as request from 'supertest';
 import { CacheModule } from '@nestjs/cache-manager';
 import { ConfigModule } from '@nestjs/config';
+import { ApiProxyService } from './api-proxy-service';
 
 describe('CachedApiController', () => {
   let app: INestApplication;
-  const cachedApiService = {
+  const apiServiceMock = {
     get: jest.fn(),
   };
   const response = { field: 22 };
@@ -24,8 +24,8 @@ describe('CachedApiController', () => {
       controllers: [CachedApiController],
       providers: [
         {
-          provide: CachedApiService,
-          useValue: cachedApiService,
+          provide: ApiProxyService,
+          useValue: apiServiceMock,
         },
       ],
     }).compile();
@@ -39,7 +39,7 @@ describe('CachedApiController', () => {
   });
 
   const setGetMockImpl = (expected_url: string, response: any) => {
-    cachedApiService.get.mockImplementation((url: string) => {
+    apiServiceMock.get.mockImplementation((url: string) => {
       const responseStr = JSON.stringify(response);
       const responseForUnexpectedUrlStr = JSON.stringify({
         message: 'Response for unexpected url',

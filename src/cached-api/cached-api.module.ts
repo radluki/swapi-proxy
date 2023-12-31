@@ -7,11 +7,8 @@ import { HttpModule } from '@nestjs/axios';
 import { CacheModule } from '@nestjs/cache-manager';
 import { redisStore } from 'cache-manager-ioredis-yet';
 import { ConcreteCacheService } from './cache-service';
-import {
-  REDIS_PORT,
-  REDIS_HOST,
-  REDIS_TTL_MS_INTERCEPTOR,
-} from '../config/config';
+import { REDIS_PORT, REDIS_HOST, REDIS_TTL_MS } from '../config/config';
+import { ApiProxyService } from './api-proxy-service';
 
 @Module({
   imports: [
@@ -23,7 +20,7 @@ import {
         store: redisStore,
         host: configService.get<string>(REDIS_HOST),
         port: configService.get<number>(REDIS_PORT),
-        ttl: configService.get<number>(REDIS_TTL_MS_INTERCEPTOR),
+        ttl: configService.get<number>(REDIS_TTL_MS),
       }),
     }),
   ],
@@ -33,6 +30,7 @@ import {
       useClass: ConcreteCacheService,
     },
     HttpRequestSender,
+    ApiProxyService,
     CachedApiService,
   ],
   controllers: [CachedApiController],

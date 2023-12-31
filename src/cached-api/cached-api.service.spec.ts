@@ -12,9 +12,11 @@ import { CacheService } from './cache-service';
 import { HttpRequestSender } from './http-request-sender';
 import { ConfigService } from '@nestjs/config';
 import { PORT, SWAPI_PROXY_URL, SWAPI_URL } from '../config/config';
+import { ApiProxyService } from './api-proxy-service';
 
 describe('CachedApiService', () => {
   let sut: CachedApiService;
+  let sut2: ApiProxyService;
   let cacheServiceMock: CacheService;
   let httpRequestSenderMock: HttpRequestSender;
   let configServiceMock: ConfigService;
@@ -46,10 +48,14 @@ describe('CachedApiService', () => {
   beforeEach(async () => {
     reset(httpRequestSenderMock);
     reset(cacheServiceMock);
-    sut = new CachedApiService(
+    sut2 = new ApiProxyService(
       instance(httpRequestSenderMock),
+      instance(configServiceMock),
+    );
+    sut = new CachedApiService(
       instance(cacheServiceMock),
       instance(configServiceMock),
+      sut2,
     );
   });
 
