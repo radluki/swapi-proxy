@@ -13,7 +13,7 @@ import { ApiProxyService } from './api-proxy-service';
 @Module({
   imports: [
     HttpModule.register({
-      timeout: 1000,
+      timeout: 5000,
     }),
     CacheModule.registerAsync({
       imports: [ConfigModule],
