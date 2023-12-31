@@ -1,4 +1,4 @@
-import { mock, verify, anything, when, instance } from 'ts-mockito';
+import { mock, verify, anything, when, instance, deepEqual } from 'ts-mockito';
 import { ConcreteCacheService } from './cache-service';
 import { ConfigService } from '@nestjs/config';
 import { Cache } from 'cache-manager';
@@ -14,7 +14,8 @@ describe('ConcreteCacheService', () => {
 
   const timeout = 1000;
   const key = 'key';
-  const value = 'value';
+  const value = '{"data":"value"}';
+  const valueObj = JSON.parse(value);
 
   beforeEach(async () => {
     cacheMock = mock<Cache>();
@@ -35,7 +36,7 @@ describe('ConcreteCacheService', () => {
   it('set should set cache with proper args', async () => {
     when(configServiceMock.get<number>(REDIS_TTL_MS)).thenReturn(timeout);
     await sut.set(key, value);
-    verify(cacheMock.set(key, value, timeout)).once();
+    verify(cacheMock.set(key, deepEqual(JSON.parse(value)), timeout)).once();
   });
 
   it('set should not propagate errors from config', async () => {
@@ -57,6 +58,12 @@ describe('ConcreteCacheService', () => {
     expect(result).toBe(value);
   });
 
+  it('get should return valueObj stringified from cache', async () => {
+    when(cacheMock.get(key)).thenResolve(valueObj);
+    const result = await sut.get(key);
+    expect(result).toBe(value);
+  });
+
   it('get should return null when cache returns null', async () => {
     when(cacheMock.get(key)).thenResolve(null);
     const result = await sut.get(key);
@@ -70,7 +77,7 @@ describe('ConcreteCacheService', () => {
   });
 
   it('get should return value if returned short before timeout - real timeout', async () => {
-    const valueOnTimeout$ = timer(timeout - 100).pipe(map(() => value));
+    const valueOnTimeout$ = timer(timeout - 100).pipe(map(() => valueObj));
     const valuePromise = firstValueFrom(valueOnTimeout$);
     when(cacheMock.get(key)).thenReturn(valuePromise);
     const result = await sut.get(key);
@@ -78,7 +85,7 @@ describe('ConcreteCacheService', () => {
   });
 
   it('get should return null on timeout - real timeout', async () => {
-    const valueOnTimeout$ = timer(timeout + 100).pipe(map(() => value));
+    const valueOnTimeout$ = timer(timeout + 100).pipe(map(() => valueObj));
     const valuePromise = firstValueFrom(valueOnTimeout$);
     when(cacheMock.get(key)).thenReturn(valuePromise);
     const result = await sut.get(key);
@@ -87,7 +94,7 @@ describe('ConcreteCacheService', () => {
 
   it('get should return value if returned short before timeout', async () => {
     testScheduler.run(async ({ cold }) => {
-      const cacheManagerObservable = cold('900ms c|', { c: value });
+      const cacheManagerObservable = cold('900ms c|', { c: valueObj });
       when(cacheMock.get(key)).thenReturn(<any>cacheManagerObservable);
 
       const result = await sut.get(key);
@@ -97,7 +104,7 @@ describe('ConcreteCacheService', () => {
 
   it('get should return null on timeout', async () => {
     testScheduler.run(async ({ cold }) => {
-      const cacheManagerObservable = cold('2000ms c|', { c: value });
+      const cacheManagerObservable = cold('2000ms c|', { c: valueObj });
       when(cacheMock.get(key)).thenReturn(<any>cacheManagerObservable);
 
       const result = await sut.get(key);
