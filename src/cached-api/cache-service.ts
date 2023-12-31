@@ -48,7 +48,8 @@ export class ConcreteCacheService implements CacheService {
       }),
     );
 
-    const cache$ = from(this.cacheManager.get<any>(key)).pipe(
+    const promise = this.cacheManager.get<any>(key);
+    const cache$ = from(promise).pipe(
       tap(
         (result) =>
           result && this.logger.debug(`Key ${key} retrieved successfully`),

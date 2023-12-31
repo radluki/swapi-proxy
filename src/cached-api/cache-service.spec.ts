@@ -4,7 +4,7 @@ import { ConfigService } from '@nestjs/config';
 import { Cache } from 'cache-manager';
 import { REDIS_TTL_MS, TIMEOUT_MILLISECONDS } from '../config/config';
 import { TestScheduler } from 'rxjs/testing';
-import { timer, race, map } from 'rxjs';
+import { timer, race, map, firstValueFrom } from 'rxjs';
 
 describe('ConcreteCacheService', () => {
   let sut: ConcreteCacheService;
@@ -70,17 +70,17 @@ describe('ConcreteCacheService', () => {
   });
 
   it('get should return value if returned short before timeout - real timeout', async () => {
-    when(cacheMock.get(key)).thenReturn(
-      <any>timer(timeout - 100).pipe(map(() => value)),
-    );
+    const valueOnTimeout$ = timer(timeout - 100).pipe(map(() => value));
+    const valuePromise = firstValueFrom(valueOnTimeout$);
+    when(cacheMock.get(key)).thenReturn(valuePromise);
     const result = await sut.get(key);
     expect(result).toBe(value);
   });
 
   it('get should return null on timeout - real timeout', async () => {
-    when(cacheMock.get(key)).thenReturn(
-      <any>timer(timeout + 100).pipe(map(() => value)),
-    );
+    const valueOnTimeout$ = timer(timeout + 100).pipe(map(() => value));
+    const valuePromise = firstValueFrom(valueOnTimeout$);
+    when(cacheMock.get(key)).thenReturn(valuePromise);
     const result = await sut.get(key);
     expect(result).toBeNull();
   });
