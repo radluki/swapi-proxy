@@ -1,12 +1,11 @@
 import { ExecutionContext, Injectable, CallHandler } from '@nestjs/common';
-import { Request } from 'express';
-import { createLogger } from './logger-factory';
+import { createLogger } from '../logger-factory';
 import { Observable, switchMap, race, timer, map, from, tap } from 'rxjs';
 import { CacheInterceptor } from '@nestjs/cache-manager';
 import { Reflector } from '@nestjs/core';
 import { ConfigService } from '@nestjs/config';
-import { PORT, TIMEOUT_MILLISECONDS } from '../config/config';
-import { getCacheKey } from '../cached-api/cached-api.service';
+import { PORT, TIMEOUT_MILLISECONDS } from '../../config/config';
+import { getCacheKey } from '../../cached-api/cached-api.service';
 
 @Injectable()
 export class CustomCacheInterceptor extends CacheInterceptor {
@@ -21,8 +20,7 @@ export class CustomCacheInterceptor extends CacheInterceptor {
   }
 
   trackBy(context: ExecutionContext): string | undefined {
-    const request = context.switchToHttp().getRequest<Request>();
-    const url = decodeURIComponent(request.url);
+    const url = decodeURIComponent(super.trackBy(context));
     const port = this.configService.get<number>(PORT);
     return getCacheKey(url, port);
   }

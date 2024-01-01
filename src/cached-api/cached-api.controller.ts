@@ -8,9 +8,9 @@ import {
 } from '@nestjs/common';
 import { Request } from 'express';
 import { createLogger } from '../utils/logger-factory';
-import { CustomCacheInterceptor } from '../utils/custom-cache.interceptor';
+import { CustomCacheInterceptor } from '../utils/interceptors/custom-cache.interceptor';
 import { ApiProxyService } from './api-proxy-service';
-import { JsonParseInterceptor } from '../utils/json-parse.interceptor';
+import { JsonParseInterceptor } from '../utils/interceptors/json-parse.interceptor';
 
 @Controller('api')
 export class CachedApiController {
