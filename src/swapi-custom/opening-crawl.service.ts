@@ -49,7 +49,7 @@ export class OpeningCrawlsService implements IOpeningCrawlsService {
       results = results.concat(response.results);
 
       this.logger.debug(`Progress: ${results.length}/${response.count}`);
-      this.logger.debug(`Fetched ${nextUrl}: ${JSON.stringify(response)}`);
+      this.logger.verbose(`Fetched ${nextUrl}: ${JSON.stringify(response)}`);
 
       nextUrl = response.next
         ? response.next.replace(/https?:\/\/.+?\//, '/')
