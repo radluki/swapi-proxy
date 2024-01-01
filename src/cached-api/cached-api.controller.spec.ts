@@ -70,7 +70,7 @@ describe('CachedApiController', () => {
     ['/api/'],
     ['/api'],
     ['/api/films'],
-    ['/api/vehicles/?page=1&name="abc"'],
+    ['/api/vehicles/?page=1&search="abc"'],
   ])('%s (GET) - test cache', async (url) => {
     setGetMockImpl(url, response);
     const cacheManager = app.get(CACHE_MANAGER) as Cache;
@@ -95,11 +95,11 @@ describe('CachedApiController', () => {
       ['/api/films/1/'],
       ['/api/species'],
       ['/api/species/'],
-      ['/api/species?name="Luke"'],
+      ['/api/species?search="Luke"'],
       ['/api/species/4/'],
       ['/api/vehicles'],
       ['/api/vehicles/'],
-      ['/api/vehicles/?page=1&name="abc"'],
+      ['/api/vehicles/?page=1&search=abc'],
       ['/api/vehicles/44/'],
       ['/api/starships'],
       ['/api/starships/876'],
@@ -118,7 +118,7 @@ describe('CachedApiController', () => {
     });
   });
 
-  describe('invalid paths', () => {
+  describe('not found - invalid paths', () => {
     test.each([
       ['/apix/'],
       ['/unknown'],
@@ -146,25 +146,31 @@ describe('CachedApiController', () => {
         });
     });
 
-    describe('string in place of id', () => {
-      test.each([['/api/films/xx/'], ['/api/people/other-field']])(
-        '%s (GET)',
-        (url) => {
-          setGetMockImpl(url, response);
-          return request(app.getHttpServer())
-            .get(url)
-            .expect(400)
-            .expect('Content-Type', /json/)
-            .then((resp) => {
-              const expected = {
-                error: 'Bad Request',
-                message: 'Validation failed (numeric string is expected)',
-                statusCode: 400,
-              };
-              expect(resp.body).toEqual(expected);
-            });
-        },
-      );
+    describe('bad requests', () => {
+      test.each([
+        ['/api/films/xx/'],
+        ['/api/people/other-field'],
+        ['/api/films/?page="xx"'],
+        ['/api/films/?name="xx"'],
+        ['/api/films/22/?name="xx"'],
+        ['/api/films/22/?search="xx"'],
+        ['/api/films/22/?page=1'],
+        ['/api/?page=1'],
+        ['/api?page=1'],
+      ])('%s (GET)', (url) => {
+        setGetMockImpl(url, response);
+        return request(app.getHttpServer())
+          .get(url)
+          .expect(400)
+          .expect('Content-Type', /json/)
+          .then((resp) => {
+            const expected = {
+              error: 'Bad Request',
+              statusCode: 400,
+            };
+            expect(resp.body.error).toEqual(expected.error);
+          });
+      });
     });
   });
 });

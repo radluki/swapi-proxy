@@ -16,7 +16,7 @@ export class ApiProxyService {
   async get(relativeUrl: string): Promise<string> {
     const fetchedValue = await this.getFromSwapi(relativeUrl);
     this.logger.log(`Fetched data for "${relativeUrl}"`);
-    this.logger.debug(`Data fetched for "${relativeUrl}": ${fetchedValue}`);
+    this.logger.verbose(`Data fetched for "${relativeUrl}": ${fetchedValue}`);
     return fetchedValue;
   }
 
