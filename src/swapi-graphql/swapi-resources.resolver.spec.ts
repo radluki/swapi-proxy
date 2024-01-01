@@ -1,5 +1,8 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { SwapiResourcesResolver } from './swapi-resources.resolver';
+import {
+  PlanetResolver,
+  SwapiResourcesResolver,
+} from './swapi-resources.resolver';
 import { INestApplication } from '@nestjs/common';
 import * as request from 'supertest';
 import { createGraphqlSchemaGeneratorModule } from './swapi-graphql.module';
@@ -17,6 +20,7 @@ describe('SwapiResourcesResolver', () => {
   let moduleFixture: TestingModule;
   let app: INestApplication;
   let resolver: SwapiResourcesResolver;
+  let planetResolver: PlanetResolver;
 
   const name = 'Luke';
   const page = 3;
@@ -27,6 +31,7 @@ describe('SwapiResourcesResolver', () => {
       imports: [createGraphqlSchemaGeneratorModule('test-schema.gql')],
       providers: [
         SwapiResourcesResolver,
+        PlanetResolver,
         {
           provide: 'ISwapiResourceProviderService',
           useValue: serviceMock,
@@ -35,6 +40,7 @@ describe('SwapiResourcesResolver', () => {
     }).compile();
 
     resolver = moduleFixture.get(SwapiResourcesResolver);
+    planetResolver = moduleFixture.get(PlanetResolver);
     app = moduleFixture.createNestApplication();
     await app.init();
   });
@@ -77,7 +83,7 @@ describe('SwapiResourcesResolver', () => {
   });
 
   it('planet calls getPlanet', async () => {
-    resolver.planet(id);
+    planetResolver.planet(id);
     expect(serviceMock.getPlanet).toHaveBeenCalledTimes(1);
     expect(serviceMock.getPlanet).toHaveBeenCalledWith(id);
   });
