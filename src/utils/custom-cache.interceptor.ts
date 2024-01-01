@@ -1,7 +1,7 @@
 import { ExecutionContext, Injectable, CallHandler } from '@nestjs/common';
 import { Request } from 'express';
 import { createLogger } from './logger-factory';
-import { Observable, switchMap, race, timer, map } from 'rxjs';
+import { Observable, switchMap, race, timer, map, from, tap } from 'rxjs';
 import { CacheInterceptor } from '@nestjs/cache-manager';
 import { Reflector } from '@nestjs/core';
 import { ConfigService } from '@nestjs/config';
@@ -20,12 +20,6 @@ export class CustomCacheInterceptor extends CacheInterceptor {
     super(cacheManager, reflector);
   }
 
-  private getPath(context: ExecutionContext): string {
-    const request = context.switchToHttp().getRequest<Request>();
-    const path = request.path;
-    return path;
-  }
-
   trackBy(context: ExecutionContext): string | undefined {
     const request = context.switchToHttp().getRequest<Request>();
     const url = decodeURIComponent(request.url);
@@ -37,8 +31,6 @@ export class CustomCacheInterceptor extends CacheInterceptor {
     context: ExecutionContext,
     next: CallHandler,
   ): Promise<Observable<any>> {
-    const path = this.getPath(context);
-    this.logger.debug(`Detected request for ${path}`);
     const key = this.trackBy(context);
 
     const timeoutMs = this.configService.get<number>(TIMEOUT_MILLISECONDS);
@@ -48,7 +40,9 @@ export class CustomCacheInterceptor extends CacheInterceptor {
         return next.handle();
       }),
     );
-    const intercept$ = super.intercept(context, next);
+    const intercept$ = from(super.intercept(context, next)).pipe(
+      tap(() => this.logger.debug(`Accessing cache for key ${key}`)),
+    );
 
     return race(intercept$, timeout$).pipe(
       switchMap((result$: Observable<any>) => {
