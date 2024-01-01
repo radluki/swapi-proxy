@@ -34,8 +34,7 @@ export class CachedApiController {
   constructor(private readonly cachedApiService: ApiProxyService) {}
 
   @Get(['/', `${SWAPI_RESOURCE}/:id`])
-  @UseInterceptors(HttpCacheConectionRobustInterceptor)
-  @UseInterceptors(JsonParseInterceptor)
+  @UseInterceptors(JsonParseInterceptor, HttpCacheConectionRobustInterceptor)
   async proxy(
     @Req() request: Request,
     @Query(WhitelistValidationPipe()) queryParams: EmptyQueryDto, // eslint-disable-line @typescript-eslint/no-unused-vars
@@ -45,8 +44,7 @@ export class CachedApiController {
   }
 
   @Get(SWAPI_RESOURCE)
-  @UseInterceptors(HttpCacheConectionRobustInterceptor)
-  @UseInterceptors(JsonParseInterceptor)
+  @UseInterceptors(JsonParseInterceptor, HttpCacheConectionRobustInterceptor)
   async resourceList(
     @Req() request: Request,
     @Query(WhitelistValidationPipe()) queryParams: SwapiQueryDto, // eslint-disable-line @typescript-eslint/no-unused-vars

@@ -48,6 +48,10 @@ describe('CachedApiController', () => {
     await app.init();
   });
 
+  beforeEach(() => {
+    app.get(CACHE_MANAGER).reset();
+  });
+
   afterAll(async () => {
     await app.close();
   });
@@ -71,6 +75,7 @@ describe('CachedApiController', () => {
       ['/api/'],
       ['/api'],
       ['/api/films'],
+      ['/api/films/66'],
       ['/api/vehicles/?page=1&search="abc"'],
     ])('%s (GET) - test cache', async (url) => {
       setGetMockImpl(url, response);
@@ -80,7 +85,10 @@ describe('CachedApiController', () => {
       const cachedBeforeApiCall = await cacheManager.get(key);
       expect(cachedBeforeApiCall).toBeUndefined();
 
-      await request(app.getHttpServer()).get(url);
+      await request(app.getHttpServer())
+        .get(url)
+        .expect(200)
+        .expect('Content-Type', /json/);
 
       const cachedValue = await cacheManager.get(key);
       expect(typeof cachedValue).toEqual('string');
