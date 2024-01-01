@@ -10,6 +10,10 @@ import { map } from 'rxjs/operators';
 @Injectable()
 export class JsonParseInterceptor implements NestInterceptor {
   intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
-    return next.handle().pipe(map((data) => JSON.parse(data)));
+    return next
+      .handle()
+      .pipe(
+        map((data) => (typeof data === 'string' ? JSON.parse(data) : data)),
+      );
   }
 }
