@@ -61,8 +61,9 @@ describe('HttpRequestSender', () => {
     let sut: HttpRequestSender;
     const httpService = new HttpService();
     let server: Server;
+    const port = 3003;
 
-    const url = 'http://localhost:3003/test';
+    const url = `http://localhost:${port}/test`;
     const body = {
       field1: 'data1',
       field2: 'data2',
@@ -70,7 +71,6 @@ describe('HttpRequestSender', () => {
 
     const createServer = () => {
       const app = express();
-      const port = 3003;
 
       app.get('/test', (req: Request, res: Response) => {
         res.send(body);
