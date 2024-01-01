@@ -18,20 +18,12 @@ export class CachedApiController {
 
   constructor(private readonly cachedApiService: ApiProxyService) {}
 
-  @Get('/')
-  @UseInterceptors(CustomCacheInterceptor)
-  @UseInterceptors(JsonParseInterceptor)
-  async getRoot(@Req() request: Request) {
-    return this.cachedApiService.get(request.url);
-  }
-
-  @Get(':resource(films|species|vehicles|starships|people|planets)/:id?')
+  @Get(['/', ':resource(films|species|vehicles|starships|people|planets)/:id?'])
   @UseInterceptors(CustomCacheInterceptor)
   @UseInterceptors(JsonParseInterceptor)
   async proxy(
     @Req() request: Request,
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    @Param('id', new ParseIntPipe({ optional: true })) id?: number,
+    @Param('id', new ParseIntPipe({ optional: true })) id?: number, // eslint-disable-line @typescript-eslint/no-unused-vars
   ) {
     return this.cachedApiService.get(request.url);
   }
