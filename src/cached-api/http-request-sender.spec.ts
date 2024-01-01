@@ -81,9 +81,7 @@ describe('HttpRequestSender', () => {
 
       port = await portfinder.getPortPromise();
 
-      return app.listen(port, () => {
-        console.log(`Test server running at http://localhost:${port}`);
-      });
+      return app.listen(port);
     };
 
     beforeAll(async () => {
