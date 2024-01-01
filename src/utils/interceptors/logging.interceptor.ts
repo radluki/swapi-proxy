@@ -15,7 +15,7 @@ export class LoggingInterceptor implements NestInterceptor {
   intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
     const now = new Date();
     const prefix = getLogPrefix();
-    const logMessageBefore = `${prefix}Request received at ${now.toISOString()}`;
+    const logMessageBefore = `${prefix}Request received`;
 
     this.logger.debug(logMessageBefore);
 

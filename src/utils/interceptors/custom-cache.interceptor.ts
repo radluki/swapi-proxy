@@ -8,8 +8,10 @@ import { PORT, TIMEOUT_MILLISECONDS } from '../../config/config';
 import { getCacheKey } from '../../cached-api/cached-api.service';
 
 @Injectable()
-export class CustomCacheInterceptor extends CacheInterceptor {
-  private readonly logger = createLogger(CustomCacheInterceptor.name);
+export class HttpCacheConectionRobustInterceptor extends CacheInterceptor {
+  private readonly logger = createLogger(
+    HttpCacheConectionRobustInterceptor.name,
+  );
 
   constructor(
     cacheManager: any,

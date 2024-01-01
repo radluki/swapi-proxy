@@ -8,7 +8,7 @@ import {
 } from '@nestjs/common';
 import { Request } from 'express';
 import { createLogger } from '../utils/logger-factory';
-import { CustomCacheInterceptor } from '../utils/interceptors/custom-cache.interceptor';
+import { HttpCacheConectionRobustInterceptor } from '../utils/interceptors/custom-cache.interceptor';
 import { ApiProxyService } from './api-proxy-service';
 import { JsonParseInterceptor } from '../utils/interceptors/json-parse.interceptor';
 
@@ -19,7 +19,7 @@ export class CachedApiController {
   constructor(private readonly cachedApiService: ApiProxyService) {}
 
   @Get(['/', ':resource(films|species|vehicles|starships|people|planets)/:id?'])
-  @UseInterceptors(CustomCacheInterceptor)
+  @UseInterceptors(HttpCacheConectionRobustInterceptor)
   @UseInterceptors(JsonParseInterceptor)
   async proxy(
     @Req() request: Request,
