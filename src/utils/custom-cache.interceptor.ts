@@ -5,7 +5,7 @@ import { Observable, switchMap, race, timer, map } from 'rxjs';
 import { CacheInterceptor } from '@nestjs/cache-manager';
 import { Reflector } from '@nestjs/core';
 import { ConfigService } from '@nestjs/config';
-import { TIMEOUT_MILLISECONDS } from '../config/config';
+import { PORT, TIMEOUT_MILLISECONDS } from '../config/config';
 import { getCacheKey } from '../cached-api/cached-api.service';
 
 @Injectable()
@@ -28,9 +28,9 @@ export class CustomCacheInterceptor extends CacheInterceptor {
 
   trackBy(context: ExecutionContext): string | undefined {
     const request = context.switchToHttp().getRequest<Request>();
-    const path = request.path;
-    const port = request.socket.localPort;
-    return getCacheKey(path, port);
+    const url = decodeURIComponent(request.url);
+    const port = this.configService.get<number>(PORT);
+    return getCacheKey(url, port);
   }
 
   async intercept(
@@ -39,11 +39,11 @@ export class CustomCacheInterceptor extends CacheInterceptor {
   ): Promise<Observable<any>> {
     const path = this.getPath(context);
     this.logger.debug(`Detected request for ${path}`);
+    const key = this.trackBy(context);
 
     const timeoutMs = this.configService.get<number>(TIMEOUT_MILLISECONDS);
     const timeout$ = timer(timeoutMs).pipe(
       map(() => {
-        const key = this.trackBy(context);
         this.logger.debug(`Interceptor timeout for key ${key}`);
         return next.handle();
       }),

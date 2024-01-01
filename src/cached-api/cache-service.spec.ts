@@ -36,7 +36,7 @@ describe('ConcreteCacheService', () => {
   it('set should set cache with proper args', async () => {
     when(configServiceMock.get<number>(REDIS_TTL_MS)).thenReturn(timeout);
     await sut.set(key, value);
-    verify(cacheMock.set(key, deepEqual(JSON.parse(value)), timeout)).once();
+    verify(cacheMock.set(key, deepEqual(value), timeout)).once();
   });
 
   it('set should not propagate errors from config', async () => {
@@ -77,7 +77,7 @@ describe('ConcreteCacheService', () => {
   });
 
   it('get should return value if returned short before timeout - real timeout', async () => {
-    const valueOnTimeout$ = timer(timeout - 100).pipe(map(() => valueObj));
+    const valueOnTimeout$ = timer(timeout - 100).pipe(map(() => value));
     const valuePromise = firstValueFrom(valueOnTimeout$);
     when(cacheMock.get(key)).thenReturn(valuePromise);
     const result = await sut.get(key);
@@ -85,7 +85,7 @@ describe('ConcreteCacheService', () => {
   });
 
   it('get should return null on timeout - real timeout', async () => {
-    const valueOnTimeout$ = timer(timeout + 100).pipe(map(() => valueObj));
+    const valueOnTimeout$ = timer(timeout + 100).pipe(map(() => value));
     const valuePromise = firstValueFrom(valueOnTimeout$);
     when(cacheMock.get(key)).thenReturn(valuePromise);
     const result = await sut.get(key);
@@ -94,7 +94,7 @@ describe('ConcreteCacheService', () => {
 
   it('get should return value if returned short before timeout', async () => {
     testScheduler.run(async ({ cold }) => {
-      const cacheManagerObservable = cold('900ms c|', { c: valueObj });
+      const cacheManagerObservable = cold('900ms c|', { c: value });
       when(cacheMock.get(key)).thenReturn(<any>cacheManagerObservable);
 
       const result = await sut.get(key);
@@ -104,7 +104,7 @@ describe('ConcreteCacheService', () => {
 
   it('get should return null on timeout', async () => {
     testScheduler.run(async ({ cold }) => {
-      const cacheManagerObservable = cold('2000ms c|', { c: valueObj });
+      const cacheManagerObservable = cold('2000ms c|', { c: value });
       when(cacheMock.get(key)).thenReturn(<any>cacheManagerObservable);
 
       const result = await sut.get(key);

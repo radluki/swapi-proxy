@@ -32,7 +32,7 @@ export class ConcreteCacheService implements CacheService {
   async set(key: string, value: string) {
     try {
       const ttl = this.configService.get<number>(REDIS_TTL_MS);
-      await this.cacheManager.set(key, JSON.parse(value), ttl);
+      await this.cacheManager.set(key, value, ttl);
       this.logger.log(`Key ${key} set successfully`);
     } catch (err) {
       this.logger.error(`Error setting key: ${err}`);
@@ -62,11 +62,8 @@ export class ConcreteCacheService implements CacheService {
         return of(null);
       }),
       map((result) => {
-        if (!result) return result;
-        if (typeof result === 'string') {
-          this.logger.warn(`Key ${key} is cached as string - old style`);
-          return result;
-        }
+        if (!result || typeof result === 'string') return result;
+        this.logger.warn(`Key ${key} is cached as object - old style`);
         return JSON.stringify(result);
       }),
     );

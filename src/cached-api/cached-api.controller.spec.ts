@@ -2,9 +2,10 @@ import { Test } from '@nestjs/testing';
 import { CachedApiController } from './cached-api.controller';
 import { INestApplication } from '@nestjs/common';
 import * as request from 'supertest';
-import { CacheModule } from '@nestjs/cache-manager';
-import { ConfigModule } from '@nestjs/config';
+import { CACHE_MANAGER, CacheModule } from '@nestjs/cache-manager';
+import { ConfigService } from '@nestjs/config';
 import { ApiProxyService } from './api-proxy-service';
+import { Cache } from 'cache-manager';
 
 describe('CachedApiController', () => {
   let app: INestApplication;
@@ -12,20 +13,33 @@ describe('CachedApiController', () => {
     get: jest.fn(),
   };
   const response = { field: 22 };
+  const configuredPort = 3000;
 
   beforeAll(async () => {
     const moduleFixture = await Test.createTestingModule({
       imports: [
         CacheModule.register({
-          ttl: 1, // 1 millisecond
+          ttl: 1000, // 1 millisecond
         }),
-        ConfigModule,
       ],
       controllers: [CachedApiController],
       providers: [
         {
           provide: ApiProxyService,
           useValue: apiServiceMock,
+        },
+        {
+          provide: ConfigService,
+          useValue: {
+            get: (key: string) => {
+              switch (key) {
+                case 'PORT':
+                  return configuredPort;
+                default:
+                  return null;
+              }
+            },
+          },
         },
       ],
     }).compile();
@@ -51,6 +65,26 @@ describe('CachedApiController', () => {
       );
     });
   };
+
+  test.each([
+    ['/api/'],
+    ['/api'],
+    ['/api/films'],
+    ['/api/vehicles/?page=1&name="abc"'],
+  ])('%s (GET) - test cache', async (url) => {
+    setGetMockImpl(url, response);
+    const cacheManager = app.get(CACHE_MANAGER) as Cache;
+    const key = `:${configuredPort}${url}`;
+
+    const cachedBeforeApiCall = await cacheManager.get(key);
+    expect(cachedBeforeApiCall).toBeUndefined();
+
+    await request(app.getHttpServer()).get(url);
+
+    const cachedValue = await cacheManager.get(key);
+    expect(typeof cachedValue).toEqual('string');
+    expect(cachedValue).toEqual(JSON.stringify(response));
+  });
 
   describe('valid paths', () => {
     test.each([
