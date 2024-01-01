@@ -66,24 +66,26 @@ describe('CachedApiController', () => {
     });
   };
 
-  test.each([
-    ['/api/'],
-    ['/api'],
-    ['/api/films'],
-    ['/api/vehicles/?page=1&search="abc"'],
-  ])('%s (GET) - test cache', async (url) => {
-    setGetMockImpl(url, response);
-    const cacheManager = app.get(CACHE_MANAGER) as Cache;
-    const key = `:${configuredPort}${url}`;
+  describe('caching', () => {
+    test.each([
+      ['/api/'],
+      ['/api'],
+      ['/api/films'],
+      ['/api/vehicles/?page=1&search="abc"'],
+    ])('%s (GET) - test cache', async (url) => {
+      setGetMockImpl(url, response);
+      const cacheManager = app.get(CACHE_MANAGER) as Cache;
+      const key = `:${configuredPort}${url}`;
 
-    const cachedBeforeApiCall = await cacheManager.get(key);
-    expect(cachedBeforeApiCall).toBeUndefined();
+      const cachedBeforeApiCall = await cacheManager.get(key);
+      expect(cachedBeforeApiCall).toBeUndefined();
 
-    await request(app.getHttpServer()).get(url);
+      await request(app.getHttpServer()).get(url);
 
-    const cachedValue = await cacheManager.get(key);
-    expect(typeof cachedValue).toEqual('string');
-    expect(cachedValue).toEqual(JSON.stringify(response));
+      const cachedValue = await cacheManager.get(key);
+      expect(typeof cachedValue).toEqual('string');
+      expect(cachedValue).toEqual(JSON.stringify(response));
+    });
   });
 
   describe('valid paths', () => {
@@ -118,7 +120,7 @@ describe('CachedApiController', () => {
     });
   });
 
-  describe('not found - invalid paths', () => {
+  describe('not found', () => {
     test.each([
       ['/apix/'],
       ['/unknown'],
@@ -145,32 +147,32 @@ describe('CachedApiController', () => {
           expect(resp.body).toEqual(expected);
         });
     });
+  });
 
-    describe('bad requests', () => {
-      test.each([
-        ['/api/films/xx/'],
-        ['/api/people/other-field'],
-        ['/api/films/?page="xx"'],
-        ['/api/films/?name="xx"'],
-        ['/api/films/22/?name="xx"'],
-        ['/api/films/22/?search="xx"'],
-        ['/api/films/22/?page=1'],
-        ['/api/?page=1'],
-        ['/api?page=1'],
-      ])('%s (GET)', (url) => {
-        setGetMockImpl(url, response);
-        return request(app.getHttpServer())
-          .get(url)
-          .expect(400)
-          .expect('Content-Type', /json/)
-          .then((resp) => {
-            const expected = {
-              error: 'Bad Request',
-              statusCode: 400,
-            };
-            expect(resp.body.error).toEqual(expected.error);
-          });
-      });
+  describe('bad request', () => {
+    test.each([
+      ['/api/films/xx/'],
+      ['/api/people/other-field'],
+      ['/api/films/?page="xx"'],
+      ['/api/films/?name="xx"'],
+      ['/api/films/22/?name="xx"'],
+      ['/api/films/22/?search="xx"'],
+      ['/api/films/22/?page=1'],
+      ['/api/?page=1'],
+      ['/api?page=1'],
+    ])('%s (GET)', (url) => {
+      setGetMockImpl(url, response);
+      return request(app.getHttpServer())
+        .get(url)
+        .expect(400)
+        .expect('Content-Type', /json/)
+        .then((resp) => {
+          const expected = {
+            error: 'Bad Request',
+            statusCode: 400,
+          };
+          expect(resp.body.error).toEqual(expected.error);
+        });
     });
   });
 });
