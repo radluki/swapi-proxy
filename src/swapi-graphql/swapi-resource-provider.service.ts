@@ -13,6 +13,11 @@ export interface ISwapiResourceProviderService {
   getStarships(name?: string, page?: number): Promise<any>;
 }
 
+export function extractIdFromUrl(url: string): number {
+  const parts = url.split('/');
+  return parseInt(parts[parts.length - 2], 10);
+}
+
 @Injectable()
 export class SwapiResourceProviderAdapter
   implements ISwapiResourceProviderService

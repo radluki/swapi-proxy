@@ -90,11 +90,11 @@ type Swapi {
 }
 
 type Query {
-  person(id: Int! = 1): Person!
   starship(id: Int! = 1): Starship!
   people(name: String, page: Int): People!
   planets(name: String, page: Int): Planets!
   starships(name: String, page: Int): Starships!
   swapi: Swapi!
   planet(id: Int! = 1): Planet!
+  person(id: Int! = 1): Person!
 }

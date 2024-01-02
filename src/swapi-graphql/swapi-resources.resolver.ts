@@ -13,11 +13,6 @@ export class SwapiResourcesResolver {
     private readonly swapiResourceProvider: ISwapiResourceProviderService,
   ) {}
 
-  @Query(() => Person)
-  async person(@IdArg() id: number) {
-    return await this.swapiResourceProvider.getPerson(id);
-  }
-
   @Query(() => Starship)
   async starship(@IdArg() id: number) {
     return await this.swapiResourceProvider.getStarship(id);

@@ -1,5 +1,8 @@
 import { Resolver, Query, Parent, ResolveField } from '@nestjs/graphql';
-import { ISwapiResourceProviderService } from '../swapi-resource-provider.service';
+import {
+  ISwapiResourceProviderService,
+  extractIdFromUrl,
+} from '../swapi-resource-provider.service';
 import { IdArg } from '../query-args';
 import { Inject } from '@nestjs/common';
 import { Person } from '../types/person.type';
@@ -24,7 +27,7 @@ export class PlanetResolver {
     const residentsData = await Promise.all(
       residentUrls.map(async (residentUrl) => {
         if (typeof residentUrl === 'string') {
-          const residentId = this.extractIdFromUrl(residentUrl);
+          const residentId = extractIdFromUrl(residentUrl);
           return await this.swapiResourceProvider.getPerson(residentId);
         }
         return residentUrl;
@@ -32,10 +35,5 @@ export class PlanetResolver {
     );
 
     return residentsData;
-  }
-
-  private extractIdFromUrl(url: string) {
-    const parts = url.split('/');
-    return parseInt(parts[parts.length - 2], 10);
   }
 }
