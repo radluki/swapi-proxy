@@ -5,7 +5,7 @@ import * as path from 'path';
 import { SwapiResourceProviderAdapter } from './swapi-resource-provider.service';
 import { SwapiResourceProvider } from './swapi-resource-provider';
 import { CachedApiModule } from '../cached-api/cached-api.module';
-import { SwapiResourcesResolver } from './swapi-resources.resolver';
+import { SwapiResourcesResolver } from './resolvers/swapi-resources.resolver';
 import { PlanetResolver } from './resolvers/planet.resolver';
 import { PersonResolver } from './resolvers/person.resolver';
 import { StarshipResolver } from './resolvers/starship.resolver';

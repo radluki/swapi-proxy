@@ -1,11 +1,11 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { SwapiResourcesResolver } from './swapi-resources.resolver';
-import { PlanetResolver } from './resolvers/planet.resolver';
+import { PlanetResolver } from './planet.resolver';
 import { INestApplication } from '@nestjs/common';
 import * as request from 'supertest';
-import { createGraphqlSchemaGeneratorModule } from './swapi-graphql.module';
-import { PersonResolver } from './resolvers/person.resolver';
-import { StarshipResolver } from './resolvers/starship.resolver';
+import { createGraphqlSchemaGeneratorModule } from '../swapi-graphql.module';
+import { PersonResolver } from './person.resolver';
+import { StarshipResolver } from './starship.resolver';
 
 const serviceMock = {
   getPerson: jest.fn(),

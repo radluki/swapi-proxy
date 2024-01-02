@@ -1,10 +1,10 @@
 import { Resolver, Query } from '@nestjs/graphql';
-import { ISwapiResourceProviderService } from './swapi-resource-provider.service';
-import { NameArg, PageArg } from './query-args';
+import { ISwapiResourceProviderService } from '../swapi-resource-provider.service';
+import { NameArg, PageArg } from '../query-args';
 import { Inject } from '@nestjs/common';
-import { People } from './types/person.type';
-import { Planets } from './types/planets.type';
-import { Starships } from './types/starships.type';
+import { People } from '../types/person.type';
+import { Planets } from '../types/planets.type';
+import { Starships } from '../types/starships.type';
 
 @Resolver()
 export class SwapiResourcesResolver {
