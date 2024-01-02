@@ -5,7 +5,6 @@ import * as path from 'path';
 import { SwapiResourceProviderAdapter } from './swapi-resource-provider.service';
 import { SwapiResourceProvider } from './swapi-resource-provider';
 import { CachedApiModule } from '../cached-api/cached-api.module';
-import { SwapiResolver } from './swapi.resolver';
 import { SwapiResourcesResolver } from './swapi-resources.resolver';
 import { PlanetResolver } from './resolvers/planet.resolver';
 import { PersonResolver } from './resolvers/person.resolver';
@@ -30,7 +29,6 @@ function getSchemaPath() {
   ],
   providers: [
     SwapiResourcesResolver,
-    SwapiResolver,
     {
       provide: 'ISwapiResourceProviderService',
       useClass: SwapiResourceProviderAdapter,

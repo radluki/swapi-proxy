@@ -15,14 +15,13 @@ describe('GraphQl api (e2e)', () => {
   });
 
   it('people simple', async () => {
-    const QUERY = '{ swapi { people { count next results { name } } } }';
+    const QUERY = '{ people { count next results { name } } }';
     const resp = await req.post('/graphql').send({
       query: QUERY,
     });
 
     expect(resp.statusCode).toBe(200);
-    expect(resp.body.data).toBeDefined();
-    const data = resp.body.data.swapi;
+    const data = resp.body.data;
     expect(data).toBeDefined();
     expect(data.people).toBeDefined();
     expect(data.people.count).toBe(82);
@@ -35,15 +34,13 @@ describe('GraphQl api (e2e)', () => {
   });
 
   it('people second page', async () => {
-    const QUERY =
-      '{ swapi { people(page: 2) { count next results { name } } } }';
+    const QUERY = '{ people(page: 2) { count next results { name } } }';
     const resp = await req.post('/graphql').send({
       query: QUERY,
     });
 
     expect(resp.statusCode).toBe(200);
-    expect(resp.body.data).toBeDefined();
-    const data = resp.body.data.swapi;
+    const data = resp.body.data;
     expect(data).toBeDefined();
     expect(data.people).toBeDefined();
     expect(data.people.count).toBe(82);
@@ -57,14 +54,13 @@ describe('GraphQl api (e2e)', () => {
 
   it('people query name', async () => {
     const QUERY =
-      '{ swapi { people(name: "Skywalker") { count next results { name } } } }';
+      '{ people(name: "Skywalker") { count next results { name } } }';
     const resp = await req.post('/graphql').send({
       query: QUERY,
     });
 
     expect(resp.statusCode).toBe(200);
-    expect(resp.body.data).toBeDefined();
-    const data = resp.body.data.swapi;
+    const data = resp.body.data;
     expect(data).toBeDefined();
     expect(data.people).toBeDefined();
     expect(data.people.count).toBe(3);
@@ -79,28 +75,28 @@ describe('GraphQl api (e2e)', () => {
   });
 
   it('person id', async () => {
-    const QUERY = '{ swapi { person(id: 2) { name } } }';
+    const QUERY = '{ person(id: 2) { name } }';
     const resp = await req.post('/graphql').send({
       query: QUERY,
     });
 
     expect(resp.statusCode).toBe(200);
-    expect(resp.body.data.swapi).toBeDefined();
-    const person = resp.body.data.swapi.person;
+    expect(resp.body.data).toBeDefined();
+    const person = resp.body.data.person;
     expect(person).toBeDefined();
     expect(person).toStrictEqual({ name: 'C-3PO' });
     expect(person.name).toBe('C-3PO');
   });
 
   it('person check subarrays', async () => {
-    const QUERY = '{ swapi { person(id: 2) { name films } } }';
+    const QUERY = '{ person(id: 2) { name films } }';
     const resp = await req.post('/graphql').send({
       query: QUERY,
     });
 
     expect(resp.statusCode).toBe(200);
-    expect(resp.body.data.swapi).toBeDefined();
-    const person = resp.body.data.swapi.person;
+    expect(resp.body.data).toBeDefined();
+    const person = resp.body.data.person;
     expect(person).toBeDefined();
     expect(person.name).toBe('C-3PO');
     expect(person.films).toBeDefined();
