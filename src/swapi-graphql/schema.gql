@@ -16,7 +16,7 @@ type Starship {
   hyperdrive_rating: String!
   MGLT: String!
   starship_class: String!
-  pilots: [String!]!
+  pilots: [Person!]!
   films: [String!]!
   url: String!
   created: String!

@@ -22,18 +22,18 @@ export class PlanetResolver {
 
   @ResolveField('residents', () => [Person])
   async getResidents(@Parent() planet: Planet) {
-    const residentUrls = planet.residents;
+    const urls = planet.residents;
 
-    const residentsData = await Promise.all(
-      residentUrls.map(async (residentUrl) => {
-        if (typeof residentUrl === 'string') {
-          const residentId = extractIdFromUrl(residentUrl);
-          return await this.swapiResourceProvider.getPerson(residentId);
+    const data = await Promise.all(
+      urls.map(async (url) => {
+        if (typeof url === 'string') {
+          const id = extractIdFromUrl(url);
+          return await this.swapiResourceProvider.getPerson(id);
         }
-        return residentUrl;
+        return url;
       }),
     );
 
-    return residentsData;
+    return data;
   }
 }

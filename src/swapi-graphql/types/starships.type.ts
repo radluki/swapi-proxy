@@ -1,4 +1,5 @@
 import { Field, ObjectType } from '@nestjs/graphql';
+import { Person } from './person.type';
 
 const StringArrayField = Field(() => [String]);
 
@@ -43,8 +44,8 @@ export class Starship {
   @Field()
   starship_class: string;
 
-  @StringArrayField
-  pilots: [string];
+  @Field(() => [Person])
+  pilots: [Person];
 
   @StringArrayField
   films: [string];
