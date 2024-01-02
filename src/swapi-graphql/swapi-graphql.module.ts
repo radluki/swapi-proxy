@@ -6,10 +6,8 @@ import { SwapiResourceProviderAdapter } from './swapi-resource-provider.service'
 import { SwapiResourceProvider } from './swapi-resource-provider';
 import { CachedApiModule } from '../cached-api/cached-api.module';
 import { SwapiResolver } from './swapi.resolver';
-import {
-  PlanetResolver,
-  SwapiResourcesResolver,
-} from './swapi-resources.resolver';
+import { SwapiResourcesResolver } from './swapi-resources.resolver';
+import { PlanetResolver } from './resolvers/planet.resolver';
 
 export function createGraphqlSchemaGeneratorModule(autoSchemaFile: string) {
   return GraphQLModule.forRoot<ApolloDriverConfig>({
@@ -20,7 +18,7 @@ export function createGraphqlSchemaGeneratorModule(autoSchemaFile: string) {
 }
 
 function getSchemaPath() {
-  return path.join(process.cwd(), 'schema.gql');
+  return path.join(process.cwd(), 'src/swapi-graphql/schema.gql');
 }
 
 @Module({

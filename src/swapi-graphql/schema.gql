@@ -38,7 +38,7 @@ type Planet {
   terrain: String!
   surface_water: String!
   population: String!
-  residents: [String!]!
+  residents: [Person!]!
   films: [String!]!
   url: String!
   created: String!
@@ -91,10 +91,10 @@ type Swapi {
 
 type Query {
   person(id: Int! = 1): Person!
-  planet(id: Int! = 1): Planet!
   starship(id: Int! = 1): Starship!
   people(name: String, page: Int): People!
   planets(name: String, page: Int): Planets!
   starships(name: String, page: Int): Starships!
   swapi: Swapi!
+  planet(id: Int! = 1): Planet!
 }

@@ -1,8 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import {
-  PlanetResolver,
-  SwapiResourcesResolver,
-} from './swapi-resources.resolver';
+import { SwapiResourcesResolver } from './swapi-resources.resolver';
+import { PlanetResolver } from './resolvers/planet.resolver';
 import { INestApplication } from '@nestjs/common';
 import * as request from 'supertest';
 import { createGraphqlSchemaGeneratorModule } from './swapi-graphql.module';
