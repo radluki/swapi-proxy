@@ -1,10 +1,10 @@
-import { Resolver, Query, Parent, ResolveField } from '@nestjs/graphql';
+import { Resolver, Query } from '@nestjs/graphql';
 import { ISwapiResourceProviderService } from './swapi-resource-provider.service';
-import { NameArg, PageArg, IdArg } from './query-args';
+import { NameArg, PageArg } from './query-args';
 import { Inject } from '@nestjs/common';
-import { People, Person } from './types/person.type';
-import { Planet, Planets } from './types/planets.type';
-import { Starship, Starships } from './types/starships.type';
+import { People } from './types/person.type';
+import { Planets } from './types/planets.type';
+import { Starships } from './types/starships.type';
 
 @Resolver()
 export class SwapiResourcesResolver {
@@ -12,11 +12,6 @@ export class SwapiResourcesResolver {
     @Inject('ISwapiResourceProviderService')
     private readonly swapiResourceProvider: ISwapiResourceProviderService,
   ) {}
-
-  @Query(() => Starship)
-  async starship(@IdArg() id: number) {
-    return await this.swapiResourceProvider.getStarship(id);
-  }
 
   @Query(() => People)
   async people(@NameArg() name: string, @PageArg() page: number) {

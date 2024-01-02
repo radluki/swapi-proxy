@@ -5,6 +5,7 @@ import { INestApplication } from '@nestjs/common';
 import * as request from 'supertest';
 import { createGraphqlSchemaGeneratorModule } from './swapi-graphql.module';
 import { PersonResolver } from './resolvers/person.resolver';
+import { StarshipResolver } from './resolvers/starship.resolver';
 
 const serviceMock = {
   getPerson: jest.fn(),
@@ -21,6 +22,7 @@ describe('SwapiResourcesResolver', () => {
   let resolver: SwapiResourcesResolver;
   let planetResolver: PlanetResolver;
   let personResolver: PersonResolver;
+  let starshipResolver: StarshipResolver;
 
   const name = 'Luke';
   const page = 3;
@@ -33,6 +35,7 @@ describe('SwapiResourcesResolver', () => {
         SwapiResourcesResolver,
         PlanetResolver,
         PersonResolver,
+        StarshipResolver,
         {
           provide: 'ISwapiResourceProviderService',
           useValue: serviceMock,
@@ -43,6 +46,8 @@ describe('SwapiResourcesResolver', () => {
     resolver = moduleFixture.get(SwapiResourcesResolver);
     planetResolver = moduleFixture.get(PlanetResolver);
     personResolver = moduleFixture.get(PersonResolver);
+    starshipResolver = moduleFixture.get(StarshipResolver);
+
     app = moduleFixture.createNestApplication();
     await app.init();
   });
@@ -91,7 +96,7 @@ describe('SwapiResourcesResolver', () => {
   });
 
   it('starship calls getStarship', async () => {
-    resolver.starship(id);
+    starshipResolver.starship(id);
     expect(serviceMock.getStarship).toHaveBeenCalledTimes(1);
     expect(serviceMock.getStarship).toHaveBeenCalledWith(id);
   });

@@ -9,6 +9,7 @@ import { SwapiResolver } from './swapi.resolver';
 import { SwapiResourcesResolver } from './swapi-resources.resolver';
 import { PlanetResolver } from './resolvers/planet.resolver';
 import { PersonResolver } from './resolvers/person.resolver';
+import { StarshipResolver } from './resolvers/starship.resolver';
 
 export function createGraphqlSchemaGeneratorModule(autoSchemaFile: string) {
   return GraphQLModule.forRoot<ApolloDriverConfig>({
@@ -37,6 +38,7 @@ function getSchemaPath() {
     SwapiResourceProvider,
     PlanetResolver,
     PersonResolver,
+    StarshipResolver,
   ],
 })
 export class SwapiGraphqlModule {}
