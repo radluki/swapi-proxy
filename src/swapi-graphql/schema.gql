@@ -2,6 +2,34 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
+type Starship {
+  name: String!
+  model: String!
+  manufacturer: String!
+  cost_in_credits: String!
+  length: String!
+  max_atmosphering_speed: String!
+  crew: String!
+  passengers: String!
+  cargo_capacity: String!
+  consumables: String!
+  hyperdrive_rating: String!
+  MGLT: String!
+  starship_class: String!
+  pilots: [String!]!
+  films: [String!]!
+  url: String!
+  created: String!
+  edited: String!
+}
+
+type Starships {
+  count: Float!
+  next: String
+  previous: String
+  results: [Starship!]!
+}
+
 type Person {
   name: String!
   height: String!
@@ -15,7 +43,7 @@ type Person {
   films: [String!]!
   species: [String!]!
   vehicles: [String!]!
-  starships: [String!]!
+  starships: [Starship!]!
   url: String!
   created: String!
   edited: String!
@@ -50,34 +78,6 @@ type Planets {
   next: String
   previous: String
   results: [Planet!]!
-}
-
-type Starship {
-  name: String!
-  model: String!
-  manufacturer: String!
-  cost_in_credits: String!
-  length: String!
-  max_atmosphering_speed: String!
-  crew: String!
-  passengers: String!
-  cargo_capacity: String!
-  consumables: String!
-  hyperdrive_rating: String!
-  MGLT: String!
-  starship_class: String!
-  pilots: [String!]!
-  films: [String!]!
-  url: String!
-  created: String!
-  edited: String!
-}
-
-type Starships {
-  count: Float!
-  next: String
-  previous: String
-  results: [Starship!]!
 }
 
 type Swapi {
