@@ -22,18 +22,12 @@ export class StarshipResolver {
 
   @ResolveField('pilots', () => [Person])
   async getPilots(@Parent() planet: Starship) {
-    const urls = planet.pilots;
-
+    const urls = planet.pilots as unknown as string[];
     const data = await Promise.all(
-      urls.map(async (url) => {
-        if (typeof url === 'string') {
-          const id = extractIdFromUrl(url);
-          return await this.swapiResourceProvider.getPerson(id);
-        }
-        return url;
-      }),
+      urls
+        .map(extractIdFromUrl)
+        .map((id: number) => this.swapiResourceProvider.getPerson(id)),
     );
-
     return data;
   }
 }
