@@ -8,7 +8,7 @@ import { Inject } from '@nestjs/common';
 import { Person } from '../types/person.type';
 import { Starship } from '../types/starships.type';
 import { getPromiseRejectionHandler } from './utils';
-import { createLogger } from 'src/utils/logger-factory';
+import { createLogger } from '../../utils/logger-factory';
 
 @Resolver(() => Person)
 export class PersonResolver {
