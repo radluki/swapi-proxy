@@ -7,9 +7,13 @@ import { IdArg } from '../query-args';
 import { Inject } from '@nestjs/common';
 import { Person } from '../types/person.type';
 import { Planet } from '../types/planets.type';
+import { getPromiseRejectionHandler } from './utils';
+import { createLogger } from 'src/utils/logger-factory';
 
 @Resolver(() => Planet)
 export class PlanetResolver {
+  private readonly logger = createLogger(PlanetResolver.name);
+
   constructor(
     @Inject('ISwapiResourceProviderService')
     private readonly swapiResourceProvider: ISwapiResourceProviderService,
@@ -26,8 +30,12 @@ export class PlanetResolver {
     const data = await Promise.all(
       urls
         .map(extractIdFromUrl)
-        .map((id: number) => this.swapiResourceProvider.getPerson(id)),
+        .map((id: number) =>
+          this.swapiResourceProvider
+            .getPerson(id)
+            .catch(getPromiseRejectionHandler(this.logger)),
+        ),
     );
-    return data;
+    return data.filter((x) => !!x);
   }
 }
