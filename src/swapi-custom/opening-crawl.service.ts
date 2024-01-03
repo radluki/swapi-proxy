@@ -31,7 +31,7 @@ export class OpeningCrawlsService implements IOpeningCrawlsService {
   }
 
   private async getCleanedLowercaseNames(): Promise<string[]> {
-    const response = await this.getAllPages(this.peopleUrl);
+    const response = await this.getNPages(this.peopleUrl, 10);
     return response.map((person) =>
       person.name
         .replaceAll(/[^\w\s]+/g, '')
@@ -41,26 +41,33 @@ export class OpeningCrawlsService implements IOpeningCrawlsService {
   }
 
   private async getAllPages(url: string): Promise<any[]> {
-    let nextUrl = url;
+    let nextUrl = url + '?page=1';
     let results = [];
     while (nextUrl) {
       const response = JSON.parse(await this.cachedApiService.get(nextUrl));
 
       results = results.concat(response.results);
 
-      this.logger.debug(`Progress: ${results.length}/${response.count}`);
-      this.logger.verbose(`Fetched ${nextUrl}: ${JSON.stringify(response)}`);
-
       nextUrl = response.next
         ? response.next.replace(/https?:\/\/.+?\//, '/')
         : null;
-      this.logger.log(`Next url: ${nextUrl}`);
     }
     return results;
   }
 
+  private async getNPages(url: string, n: number): Promise<any[]> {
+    const promises = [...Array(n).keys()].map((i) =>
+      this.cachedApiService.get(url + '?page=' + (i + 1)).catch(() => null),
+    );
+    const resolved = await Promise.all(promises);
+    const responses = resolved
+      .filter((x) => !!x)
+      .map((response) => JSON.parse(response));
+    return responses.flatMap((response) => response.results);
+  }
+
   private async getCleanedMergedOpeningCrawls(): Promise<string> {
-    const response = await this.getAllPages(this.filmsUrl);
+    const response = await this.getNPages(this.filmsUrl, 2);
     const openingCrawls = response
       .map((film) => film.opening_crawl)
       .join('\n')

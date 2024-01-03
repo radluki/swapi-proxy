@@ -1,6 +1,6 @@
 import { OpeningCrawlsService } from './opening-crawl.service';
 import { CachedApiService } from '../cached-api/cached-api.service';
-import { mock, instance, when, reset } from 'ts-mockito';
+import { mock, instance, when, reset, anything } from 'ts-mockito';
 
 describe('OpeningCrawlsService', () => {
   let sut: OpeningCrawlsService;
@@ -16,6 +16,9 @@ describe('OpeningCrawlsService', () => {
   });
 
   it('countWords', async () => {
+    when(cachedApiServiceMock.get(anything())).thenReject(
+      new Error('not found'),
+    );
     const getResp = {
       results: [
         { opening_crawl: ' one,.,. !@two,!     R2-D2\nthree....' },
@@ -23,7 +26,7 @@ describe('OpeningCrawlsService', () => {
       ],
     };
     const serializedGetResp = JSON.stringify(getResp);
-    when(cachedApiServiceMock.get('/api/films/')).thenResolve(
+    when(cachedApiServiceMock.get('/api/films/?page=1')).thenResolve(
       serializedGetResp,
     );
 
@@ -39,12 +42,17 @@ describe('OpeningCrawlsService', () => {
   });
 
   it('getNamesWithTheMostOccurences', async () => {
+    when(cachedApiServiceMock.get(anything())).thenReject(
+      new Error('not found'),
+    );
     const page1 = {
       next: 'https://swapi.dev/api/people/?page=2',
       results: [{ name: 'Luke Skywalker' }, { name: 'Leia Morgana' }],
     };
     const serializedPage1 = JSON.stringify(page1);
-    when(cachedApiServiceMock.get('/api/people/')).thenResolve(serializedPage1);
+    when(cachedApiServiceMock.get('/api/people/?page=1')).thenResolve(
+      serializedPage1,
+    );
 
     const page2 = {
       next: null,
@@ -65,7 +73,7 @@ describe('OpeningCrawlsService', () => {
       ],
     };
     const serializedFilmsResp = JSON.stringify(filmsResp);
-    when(cachedApiServiceMock.get('/api/films/')).thenResolve(
+    when(cachedApiServiceMock.get('/api/films/?page=1')).thenResolve(
       serializedFilmsResp,
     );
 
